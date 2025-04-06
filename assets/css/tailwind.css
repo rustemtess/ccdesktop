@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+html, body {
+    background-color: #131F24;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100svh;
+    overflow: hidden;
+}
+
+.titlebar {
+    position: sticky;
+    top: 0;
+    width: 100%; 
+    height: fit-content;
+    display: flex; 
+    justify-content: space-between;
+    align-items: center; 
+    user-select: none;
+    /*-webkit-app-region: drag;*/
+    background-color: #1F2E35;
+    padding-left: 10px;
+    color: white;
+}
+
+.titlebar > nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    -webkit-app-region: no-drag;
+}
+
+.titlebar button {
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+}
+.titlebar button:hover { background-color: rgba(0,0,0,0.2); }
+
+@keyframes confetti {
+    0% { transform: translate(0, 0); opacity: 1; }
+    100% { transform: translate(var(--x), var(--y)); opacity: 0; }
+}
+
+/* Конфетти */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: var(--color);
+    opacity: 1;
+    animation: confetti 1.5s ease-out forwards;
+}
+
+/* Стили для контейнера с конфетти */
+#confetti-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+}
