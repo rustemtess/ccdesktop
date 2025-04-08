@@ -29,23 +29,24 @@
     <div id="effect" class="hidden absolute top-0 left-0 w-full h-full pointer-events-none"></div>
   
     <div class="flex-1 flex flex-col w-full h-svh justify-center items-center gap-10">
-      <div style="background-image: url(./1.svg);" class="relative bg-cover w-[380px] h-[235px]" id="main-figure">
-        <div class="drop-zone w-[106px] h-[65px] absolute right-[40px] bottom-[20px]" id="drop-zone-1" data-index="5"></div>
-      </div>
+        <div class="flex justify-center relative" id="main-figure">
+            <img src="./1.svg" style="width: 32vw;" />
+            <div class="drop-zone w-[9.2vw] h-[5.8vw] absolute right-[3.3vw] bottom-[1.9vw]" id="drop-zone-1" data-index="0"></div>
+        </div>
     
       <div class="small-figures-container grid grid-cols-3 gap-5">
-        <div style="background-image: url(./2.svg);" class="draggable draggable-figure w-[120px] h-[75px] bg-cover" data-index="0"></div>
-        <div style="background-image: url(./3.svg);" class="draggable draggable-figure w-[120px] h-[75px] bg-cover" data-index="1"></div>
-        <div style="background-image: url(./4.svg);" class="draggable draggable-figure w-[120px] h-[75px] bg-cover" data-index="2"></div>
-        <div style="background-image: url(./5.svg);" class="draggable draggable-figure w-[120px] h-[75px] bg-cover" data-index="3"></div>
-        <div style="background-image: url(./6.svg);" class="draggable draggable-figure w-[120px] h-[75px] bg-cover" data-index="4"></div>
-        <div style="background-image: url(./7.svg);" class="draggable draggable-figure w-[120px] h-[75px] bg-cover" data-index="5"></div>
+        <div style="background-image: url(./2.svg);" class="draggable draggable-figure w-[10.2vw] bg-cover h-[6.45vw]" data-index="0"></div>
+        <div style="background-image: url(./3.svg);" class="draggable draggable-figure w-[10.2vw] bg-cover h-[6.45vw]" data-index="1"></div>
+        <div style="background-image: url(./4.svg);" class="draggable draggable-figure w-[10.2vw] bg-cover h-[6.45vw]" data-index="2"></div>
+        <div style="background-image: url(./5.svg);" class="draggable draggable-figure w-[10.2vw] bg-cover h-[6.45vw]" data-index="3"></div>
+        <div style="background-image: url(./6.svg);" class="draggable draggable-figure w-[10.2vw] bg-cover h-[6.45vw]" data-index="4"></div>
+        <div style="background-image: url(./7.svg);" class="draggable draggable-figure w-[10.2vw] bg-cover h-[6.45vw]" data-index="5"></div>
       </div>
     </div>
   
     <div class="p-5 h-[120px] flex justify-center gap-4">
-      <button onclick="window.location.href = '../../../menu.html'" class="h-fit border-[2px] border-gray-600 border-b-[4px] border-b-gray-600 p-2.5 px-5 rounded-xl text-gray-600 duration-150 font-medium hover:bg-[rgba(0,0,0,0.1)]">ВЕРНУТЬСЯ В МЕНЮ</button>
-      <button id="next" class="hidden bg-[#93D333] h-fit border-b-[4px] border-b-[#79B933] p-2.5 px-5 rounded-xl text-[#131F24] duration-150 font-medium hover:bg-[#93E533]">СЛЕДУЩИЙ УРОВЕНЬ</button>
+      <button id="backToMenu" onclick="window.location.href = '../../../menu.html'" class="h-fit border-[2px] border-gray-600 border-b-[4px] border-b-gray-600 p-2.5 px-5 rounded-xl text-gray-600 duration-150 font-medium hover:bg-[rgba(0,0,0,0.1)]"></button>
+      <button onclick="window.location.href = '../A4/index.html'" id="next" class="hidden bg-[#93D333] h-fit border-b-[4px] border-b-[#79B933] p-2.5 px-5 rounded-xl text-[#131F24] duration-150 font-medium hover:bg-[#93E533]"></button>
       <audio id="success-sound" src="../../../assets/sounds/success.mp3"></audio>
   </div>
   </div>
@@ -59,7 +60,11 @@
     <script src="../../../module/Draggable.js"></script>
     <script>
       document.querySelectorAll('.draggable').forEach(block => {
-          block.__draggableInstance = new Draggable(block, block.dataset.index, 1, launchConfetti, true);
+          block.__draggableInstance = new Draggable(block, block.dataset.index, {
+            done: 2,
+            win: 1,
+            max: 3
+          }, launchConfetti, true);
       });
   </script>
 </body>

@@ -1,5 +1,9 @@
 class Draggable {
-    constructor(element, index, beforeWin = 1, effectFunction = Function(), isProgress = false) {
+    constructor(element, index, progress = {
+      done: 0,
+      win: 0,
+      max: 10
+    }, effectFunction = Function(), isProgress = false) {
       this.element = element;
       this.index = index;
       this.dragging = false;
@@ -9,13 +13,18 @@ class Draggable {
       this.translateX = 0;
       this.translateY = 0;
       this.originalRect = null;
-      this.beforeWin = beforeWin;
+      this.progress = progress;
       this.effectFunction = effectFunction
       this.isProgress = isProgress
       this.onPointerMove = this.onPointerMove.bind(this);
       this.onPointerUp = this.onPointerUp.bind(this);
       this.element.classList.add('cursor-pointer')
       this.element.addEventListener('pointerdown', this.onPointerDown.bind(this));
+      document.addEventListener('DOMContentLoaded', () => {
+        const progress = document.getElementById('doing');
+        const progressPercentage = (this.progress.win / (this.progress.done * this.progress.max)) * 100;  // Прогресс из 3 блоков
+        progress.style.width = `${progressPercentage}%`;
+      })
     }
 
     onPointerDown(event) {
@@ -114,13 +123,13 @@ class Draggable {
           return el.__draggableInstance?.dropped;
       });
 
-      if(this.isProgress) {
+      if(this.isProgress && allPlaced.length > 0) {
         const progress = document.getElementById('doing');
-        const progressPercentage = (allPlaced.length / this.beforeWin) * 100;  // Прогресс из 3 блоков
+        const progressPercentage = (allPlaced.length / ((this.progress.done + this.progress.win) * (this.progress.max / allPlaced.length))) * 100;  // Прогресс из 3 блоков
         progress.style.width = `${progressPercentage}%`;
       }
       
-      if (allPlaced.length === this.beforeWin) {
+      if (allPlaced.length === this.progress.win) {
           document.getElementById("next").classList.remove('hidden')
           const successSound = document.getElementById('success-sound');
           if (successSound) successSound.play();

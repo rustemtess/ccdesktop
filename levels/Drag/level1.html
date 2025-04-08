@@ -63,7 +63,11 @@
         shuffleBlocks('block-container');
       
         document.querySelectorAll('.draggable').forEach(block => {
-            block.__draggableInstance = new Draggable(block, block.dataset.index, 3, launchConfetti, true);
+            block.__draggableInstance = new Draggable(block, block.dataset.index, {
+              done: 0,
+              win: 3,
+              max: 3
+            }, launchConfetti, true);
         });
     </script>
       

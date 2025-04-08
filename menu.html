@@ -6,7 +6,7 @@
     <link href="./assets/css/main.css" rel="stylesheet">
     <link href="./assets/css/tailwind.css" rel="stylesheet">
 </head>
-  <body style="background-image: url(./assets/img/background2.jpg);" class="bg-cover">
+  <body style="background-image: url(./assets/img/background2.jpg);" class="bg-cover flex flex-col items-center">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
     <div class="titlebar">
       <h2 class="text-gray-400 text-xs">Центр компетенций</h2>
@@ -20,27 +20,23 @@
       </nav>
     </div>
 
-    <div class="w-full mt-16 grid grid-flow-col grid-rows-2 gap-10 justify-center items-center">
-        <div onclick="window.location.href = './levels/ColorMatrices/level1/index.html'" class="cursor-pointer relative w-[400px] h-[240px] rounded-3xl overflow-hidden border-b-[6px] border-x-[#000229] border-x-[1px] border-b-[#000229] duration-150 hover:border-b-[10px] hover:border-x-[3px]">
+    <div class="z-10 w-full flex justify-end items-center gap-5 px-3 pt-2">
+      <button id="localeKz">
+        <img src="./assets/img/flag_kz.png" width="50" />
+      </button>
+      <button id="localeRu">
+        <img src="./assets/img/flag_ru.png" width="50" />
+      </button>
+      <button id="localeEn">
+        <img src="./assets/img/flag_us.png" width="50" />
+      </button>
+    </div>
+
+    <div class="w-fit bg-red-300 mt-16 grid grid-flow-col grid-cols-2 gap-10">
+        <div onclick="window.location.href = './levels/ColorMatrices/A1/index.html'" class="cursor-pointer relative w-[400px] h-[240px] rounded-3xl overflow-hidden border-b-[6px] border-x-[#000229] border-x-[1px] border-b-[#000229] duration-150 hover:border-b-[10px] hover:border-x-[3px]">
             <!-- Фоновая картинка -->
             <div
               style="background-image: url('./assets/img/ColorMatrices.png'); "
-              class="w-full h-full bg-cover bg-center"
-            ></div>
-          
-            <!-- Черный оверлей -->
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-          
-            <!-- Контент поверх всего -->
-            <div class="absolute inset-0 flex items-center justify-center text-2xl text-white z-10 p-4 text-center">
-                Цветные прогрессивные матрицы Равена
-            </div>
-        </div>
-        
-        <div class="cursor-pointer relative w-[400px] h-[240px] rounded-3xl overflow-hidden border-b-[6px] border-x-[#79B933] border-x-[1px] border-b-[#79B933] duration-150 hover:border-b-[10px] hover:border-x-[3px]">
-            <!-- Фоновая картинка -->
-            <div
-              style="background-image: url('./assets/img/ColorMatrices.jpg'); "
               class="w-full h-full bg-cover bg-center"
             ></div>
           
@@ -69,25 +65,8 @@
             </div>
         </div>
 
-        <div class="cursor-pointer relative w-[400px] h-[240px] rounded-3xl overflow-hidden border-b-[6px] border-x-[#79B933] border-x-[1px] border-b-[#79B933] duration-150 hover:border-b-[10px] hover:border-x-[3px]">
-            <!-- Фоновая картинка -->
-            <div
-              style="background-image: url('./assets/img/ColorMatrices.jpg'); "
-              class="w-full h-full bg-cover bg-center"
-            ></div>
-          
-            <!-- Черный оверлей -->
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-          
-            <!-- Контент поверх всего -->
-            <div class="absolute inset-0 flex items-center justify-center text-2xl text-white z-10 p-4 text-center">
-                Цветные прогрессивные матрицы Равена
-            </div>
-        </div>
           
     </div>
-      
-
 
     <script src="./renderer.js"></script>
       
