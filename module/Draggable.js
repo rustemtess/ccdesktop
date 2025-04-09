@@ -1,3 +1,5 @@
+let gameCompleted = false;
+
 class Draggable {
     constructor(element, index, progress = {
       done: 0,
@@ -123,13 +125,14 @@ class Draggable {
           return el.__draggableInstance?.dropped;
       });
 
-      if(this.isProgress && allPlaced.length > 0) {
+      if(this.isProgress) {
         const progress = document.getElementById('doing');
-        const progressPercentage = (allPlaced.length / ((this.progress.done + this.progress.win) * (this.progress.max / allPlaced.length))) * 100;  // Прогресс из 3 блоков
+        const progressPercentage = (allPlaced.length / this.progress.win) * 100;  // Прогресс из 3 блоков
         progress.style.width = `${progressPercentage}%`;
       }
       
-      if (allPlaced.length === this.progress.win) {
+      if (allPlaced.length === this.progress.win && !gameCompleted) {
+          gameCompleted = true;
           document.getElementById("next").classList.remove('hidden')
           const successSound = document.getElementById('success-sound');
           if (successSound) successSound.play();

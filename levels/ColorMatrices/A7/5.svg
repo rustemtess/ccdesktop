@@ -1,0 +1,33 @@
+<svg width="97" height="66" viewBox="0 0 97 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5.5 31V34.5H14V31H5.5Z" fill="black"/>
+<path d="M20.5 31V34.5H29V31H20.5Z" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M52 31V34.5H60.5V31H52ZM66 31V34.5H74.5V31H66ZM80 31V34.5H88.5V31H80Z" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M0.5 1H81L96.5 27.5V37L81 65H0.5V1ZM5.5 34.5V31H14V34.5H5.5ZM20.5 34.5V31H29V34.5H20.5ZM52 34.5V31H60.5V34.5H52ZM66 34.5V31H74.5V34.5H66ZM80 34.5V31H88.5V34.5H80Z" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M0.5 1H81L96.5 27.5V37L81 65H0.5V1ZM5.5 34.5V31H14V34.5H5.5ZM20.5 34.5V31H29V34.5H20.5ZM52 34.5V31H60.5V34.5H52ZM66 34.5V31H74.5V34.5H66ZM80 34.5V31H88.5V34.5H80Z" fill="#EC451A"/>
+<path d="M28 5H24.5V11.5H28V5Z" fill="black"/>
+<path d="M28 18.5H24.5V25H28V18.5Z" fill="black"/>
+<path d="M28 29H24.5V35.5H28V29Z" fill="black"/>
+<path d="M28 41.5H24.5V48H28V41.5Z" fill="black"/>
+<path d="M28 53H24.5V59.5H28V53Z" fill="black"/>
+<path d="M34 34.5V31H42.5V34.5H34Z" fill="black"/>
+<path d="M60 5H56.5V11.5H60V5Z" fill="black"/>
+<path d="M60 18.5H56.5V25H60V18.5Z" fill="black"/>
+<path d="M60 29H56.5V35.5H60V29Z" fill="black"/>
+<path d="M60 41.5H56.5V48H60V41.5Z" fill="black"/>
+<path d="M60 54H56.5V60.5H60V54Z" fill="black"/>
+<path d="M5.5 31V34.5H14V31H5.5Z" stroke="black"/>
+<path d="M20.5 31V34.5H29V31H20.5Z" stroke="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M52 31V34.5H60.5V31H52ZM66 31V34.5H74.5V31H66ZM80 31V34.5H88.5V31H80Z" stroke="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M0.5 1H81L96.5 27.5V37L81 65H0.5V1ZM5.5 34.5V31H14V34.5H5.5ZM20.5 34.5V31H29V34.5H20.5ZM52 34.5V31H60.5V34.5H52ZM66 34.5V31H74.5V34.5H66ZM80 34.5V31H88.5V34.5H80Z" stroke="black"/>
+<path d="M28 5H24.5V11.5H28V5Z" stroke="black"/>
+<path d="M28 18.5H24.5V25H28V18.5Z" stroke="black"/>
+<path d="M28 29H24.5V35.5H28V29Z" stroke="black"/>
+<path d="M28 41.5H24.5V48H28V41.5Z" stroke="black"/>
+<path d="M28 53H24.5V59.5H28V53Z" stroke="black"/>
+<path d="M34 34.5V31H42.5V34.5H34Z" stroke="black"/>
+<path d="M60 5H56.5V11.5H60V5Z" stroke="black"/>
+<path d="M60 18.5H56.5V25H60V18.5Z" stroke="black"/>
+<path d="M60 29H56.5V35.5H60V29Z" stroke="black"/>
+<path d="M60 41.5H56.5V48H60V41.5Z" stroke="black"/>
+<path d="M60 54H56.5V60.5H60V54Z" stroke="black"/>
+</svg>

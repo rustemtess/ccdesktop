@@ -20,19 +20,25 @@
       </nav>
     </div>
 
-    <div class="z-10 w-full flex justify-end items-center gap-5 px-3 pt-2">
-      <button id="localeKz">
-        <img src="./assets/img/flag_kz.png" width="50" />
+    <div class="z-10 w-full flex justify-between items-center gap-5 px-5 pt-4">
+      <button class="flex items-center gap-2 bg-[#49C0F8] h-fit border-b-[4px] border-b-[#1899D6] p-2.5 px-5 rounded-xl text-[#131F24] duration-150 font-medium hover:bg-[#49C5F8]">
+        <img src="./assets/img/manual.png" width="22" />
+        <p id="instructions"></p>
       </button>
-      <button id="localeRu">
-        <img src="./assets/img/flag_ru.png" width="50" />
-      </button>
-      <button id="localeEn">
-        <img src="./assets/img/flag_us.png" width="50" />
-      </button>
+      <nav class="flex gap-5">
+        <button id="localeKz">
+          <img src="./assets/img/flag_kz.png" width="50" />
+        </button>
+        <button id="localeRu">
+          <img src="./assets/img/flag_ru.png" width="50" />
+        </button>
+        <button id="localeEn">
+          <img src="./assets/img/flag_us.png" width="50" />
+        </button>
+      </nav>
     </div>
 
-    <div class="w-fit bg-red-300 mt-16 grid grid-flow-col grid-cols-2 gap-10">
+    <div class="w-fit mt-16 grid grid-flow-col grid-cols-2 gap-10">
         <div onclick="window.location.href = './levels/ColorMatrices/A1/index.html'" class="cursor-pointer relative w-[400px] h-[240px] rounded-3xl overflow-hidden border-b-[6px] border-x-[#000229] border-x-[1px] border-b-[#000229] duration-150 hover:border-b-[10px] hover:border-x-[3px]">
             <!-- Фоновая картинка -->
             <div

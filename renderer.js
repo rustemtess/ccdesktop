@@ -1,9 +1,13 @@
 function updateTexts() {
     const backToMenu = document.getElementById('backToMenu');
     const nextLevel = document.getElementById('next');
-    if(backToMenu || nextLevel) {
+    const instructions = document.getElementById('instructions');
+    if(backToMenu && nextLevel) {
         backToMenu.innerText = window.electronAPI.t('backToMenu')
         nextLevel.innerText = window.electronAPI.t('nextLevel')
+    }
+    else if(instructions) {
+        instructions.innerText = window.electronAPI.t('instructions')
     }
 }
 
