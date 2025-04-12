@@ -5,7 +5,11 @@
         <title>Hello from Electron renderer!</title>
         <link href="./assets/css/main.css" rel="stylesheet" />
     </head>
-    <body>
+    <body
+        style="background-image: url(./assets/img/background2.jpg)"
+        class="bg-cover flex flex-col items-center"
+    >
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
         <div class="titlebar">
             <h2 class="text-gray-400 text-xs">Центр компетенций</h2>
             <nav>
@@ -43,7 +47,34 @@
             </nav>
         </div>
 
-        <button onclick="window.location.href = 'menu.html'">Menu</button>
+        <div
+            class="z-10 w-full flex justify-between items-center gap-5 px-5 pt-4"
+        >
+            <button
+                onclick="window.location.href = 'menu.html'"
+                class="flex items-center gap-2 bg-[#49C0F8] h-fit border-b-[4px] border-b-[#1899D6] p-2.5 px-5 rounded-xl text-[#131F24] duration-150 font-medium hover:bg-[#49C5F8]"
+            >
+                <img src="./assets/img/menu.png" width="18" />
+                <p id="menu"></p>
+            </button>
+            <nav class="flex gap-5">
+                <button id="localeKz">
+                    <img src="./assets/img/flag_kz.png" width="50" />
+                </button>
+                <button id="localeRu">
+                    <img src="./assets/img/flag_ru.png" width="50" />
+                </button>
+                <button id="localeEn">
+                    <img src="./assets/img/flag_us.png" width="50" />
+                </button>
+            </nav>
+        </div>
+
+        <div
+            class="mt-3 z-10 rounded-2xl bg-[#1f2e35] h-[80%] w-[70%] text-white p-2 border-b-[6px] border-b-[#314752]"
+        >
+            awdawdawdadawdaw
+        </div>
 
         <script src="./renderer.js"></script>
     </body>

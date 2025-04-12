@@ -1,81 +1,129 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Hello from Electron renderer!</title>
-    <link href="./assets/css/main.css" rel="stylesheet">
-    <link href="./assets/css/tailwind.css" rel="stylesheet">
-</head>
-  <body style="background-image: url(./assets/img/background2.jpg);" class="bg-cover flex flex-col items-center">
-    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-    <div class="titlebar">
-      <h2 class="text-gray-400 text-xs">Центр компетенций</h2>
-      <nav>
-        <button id="minimize">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.001 9.999a.75.75 0 0 1 .75-.75h12.5a.75.75 0 0 1 0 1.5h-12.5a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd"/></svg>
-        </button>
-        <button id="close">
-          <svg fill="none" height="16" viewBox="0 0 20 20" width="16" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="m4.71967 4.71967c.29289-.29289.76777-.29289 1.06066 0l4.21967 4.21967 4.2197-4.21967c.2929-.29289.7677-.29289 1.0606 0s.2929.76777 0 1.06066l-4.2196 4.21967 4.2196 4.2197c.2929.2929.2929.7677 0 1.0606s-.7677.2929-1.0606 0l-4.2197-4.2196-4.21967 4.2196c-.29289.2929-.76777.2929-1.06066 0s-.29289-.7677 0-1.0606l4.21967-4.2197-4.21967-4.21967c-.29289-.29289-.29289-.76777 0-1.06066z" fill="white" fill-rule="evenodd"/></svg>
-        </button>
-      </nav>
-    </div>
-
-    <div class="z-10 w-full flex justify-between items-center gap-5 px-5 pt-4">
-      <button class="flex items-center gap-2 bg-[#49C0F8] h-fit border-b-[4px] border-b-[#1899D6] p-2.5 px-5 rounded-xl text-[#131F24] duration-150 font-medium hover:bg-[#49C5F8]">
-        <img src="./assets/img/manual.png" width="22" />
-        <p id="instructions"></p>
-      </button>
-      <nav class="flex gap-5">
-        <button id="localeKz">
-          <img src="./assets/img/flag_kz.png" width="50" />
-        </button>
-        <button id="localeRu">
-          <img src="./assets/img/flag_ru.png" width="50" />
-        </button>
-        <button id="localeEn">
-          <img src="./assets/img/flag_us.png" width="50" />
-        </button>
-      </nav>
-    </div>
-
-    <div class="w-fit mt-16 grid grid-flow-col grid-cols-2 gap-10">
-        <div onclick="window.location.href = './levels/ColorMatrices/A1/index.html'" class="cursor-pointer relative w-[400px] h-[240px] rounded-3xl overflow-hidden border-b-[6px] border-x-[#000229] border-x-[1px] border-b-[#000229] duration-150 hover:border-b-[10px] hover:border-x-[3px]">
-            <!-- Фоновая картинка -->
-            <div
-              style="background-image: url('./assets/img/ColorMatrices.png'); "
-              class="w-full h-full bg-cover bg-center"
-            ></div>
-          
-            <!-- Черный оверлей -->
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-          
-            <!-- Контент поверх всего -->
-            <div class="absolute inset-0 flex items-center justify-center text-2xl text-white z-10 p-4 text-center">
-                Цветные прогрессивные матрицы Равена
-            </div>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Hello from Electron renderer!</title>
+        <link href="./assets/css/main.css" rel="stylesheet" />
+    </head>
+    <body
+        style="background-image: url(./assets/img/background2.jpg)"
+        class="bg-cover flex flex-col items-center"
+    >
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+        <div class="titlebar">
+            <h2 class="text-gray-400 text-xs">Центр компетенций</h2>
+            <nav>
+                <button id="minimize">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="white"
+                        viewBox="0 0 20 20"
+                    >
+                        <path
+                            fill-rule="evenodd"
+                            d="M3.001 9.999a.75.75 0 0 1 .75-.75h12.5a.75.75 0 0 1 0 1.5h-12.5a.75.75 0 0 1-.75-.75Z"
+                            clip-rule="evenodd"
+                        />
+                    </svg>
+                </button>
+                <button id="close">
+                    <svg
+                        fill="none"
+                        height="16"
+                        viewBox="0 0 20 20"
+                        width="16"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            clip-rule="evenodd"
+                            d="m4.71967 4.71967c.29289-.29289.76777-.29289 1.06066 0l4.21967 4.21967 4.2197-4.21967c.2929-.29289.7677-.29289 1.0606 0s.2929.76777 0 1.06066l-4.2196 4.21967 4.2196 4.2197c.2929.2929.2929.7677 0 1.0606s-.7677.2929-1.0606 0l-4.2197-4.2196-4.21967 4.2196c-.29289.2929-.76777.2929-1.06066 0s-.29289-.7677 0-1.0606l4.21967-4.2197-4.21967-4.21967c-.29289-.29289-.29289-.76777 0-1.06066z"
+                            fill="white"
+                            fill-rule="evenodd"
+                        />
+                    </svg>
+                </button>
+            </nav>
         </div>
 
-        <div onclick="window.location.href = './levels/Drag/level1.html'" class="cursor-pointer relative w-[400px] h-[240px] rounded-3xl overflow-hidden border-b-[6px] border-x-[#040122] border-x-[1px] border-b-[#040122] duration-150 hover:border-b-[10px] hover:border-x-[3px]">
-            <!-- Фоновая картинка -->
-            <div
-              style="background-image: url('./assets/img/PutRightPictures.jpg'); "
-              class="w-full h-full bg-cover bg-center"
-            ></div>
-          
-            <!-- Черный оверлей -->
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-          
-            <!-- Контент поверх всего -->
-            <div class="absolute inset-0 flex items-center justify-center text-2xl text-white z-10 p-4 text-center">
-                Расположите необходимые картинки в правильном порядке
-            </div>
+        <div
+            class="z-10 w-full flex justify-between items-center gap-5 px-5 pt-4"
+        >
+            <button
+                onclick="window.location.href = 'instruction.html'"
+                class="flex items-center gap-2 bg-[#49C0F8] h-fit border-b-[4px] border-b-[#1899D6] p-2.5 px-5 rounded-xl text-[#131F24] duration-150 font-medium hover:bg-[#49C5F8]"
+            >
+                <img src="./assets/img/manual.png" width="22" />
+                <p id="instructions"></p>
+            </button>
+            <nav class="flex gap-5">
+                <button id="localeKz">
+                    <img src="./assets/img/flag_kz.png" width="50" />
+                </button>
+                <button id="localeRu">
+                    <img src="./assets/img/flag_ru.png" width="50" />
+                </button>
+                <button id="localeEn">
+                    <img src="./assets/img/flag_us.png" width="50" />
+                </button>
+            </nav>
         </div>
 
-          
-    </div>
+        <div class="w-fit mt-16 grid grid-flow-col grid-cols-2 gap-10">
+            <div
+                onclick="window.location.href = './levels/ColorMatrices/A1/index.html'"
+                class="cursor-pointer relative w-[400px] h-[240px] rounded-3xl overflow-hidden border-b-[6px] border-x-[#000229] border-x-[1px] border-b-[#000229] duration-150 hover:border-b-[10px] hover:border-x-[3px]"
+            >
+                <!-- Фоновая картинка -->
+                <div
+                    style="
+                        background-image: url(&quot;./assets/img/ColorMatrices.png&quot;);
+                    "
+                    class="w-full h-full bg-cover bg-center"
+                ></div>
 
-    <script src="./renderer.js"></script>
-      
-      
-  </body>
+                <!-- Черный оверлей -->
+                <div
+                    class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                ></div>
+
+                <!-- Контент поверх всего -->
+                <div
+                    id="first_game"
+                    class="absolute inset-0 flex items-center justify-center text-2xl text-white z-10 p-4 text-center"
+                ></div>
+            </div>
+
+            <div
+                onclick="window.location.href = './levels/Drag/level1.html'"
+                class="cursor-pointer relative w-[400px] h-[240px] rounded-3xl overflow-hidden border-b-[6px] border-x-[#040122] border-x-[1px] border-b-[#040122] duration-150 hover:border-b-[10px] hover:border-x-[3px]"
+            >
+                <!-- Фоновая картинка -->
+                <div
+                    style="
+                        background-image: url(&quot;./assets/img/PutRightPictures.jpg&quot;);
+                    "
+                    class="w-full h-full bg-cover bg-center"
+                ></div>
+
+                <!-- Черный оверлей -->
+                <div
+                    class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                ></div>
+
+                <!-- Контент поверх всего -->
+                <div
+                    id="second_game"
+                    class="absolute inset-0 flex items-center justify-center text-2xl text-white z-10 p-4 text-center"
+                >
+                    Расположите необходимые картинки в правильном порядке
+                </div>
+            </div>
+        </div>
+        <script>
+            localStorage.setItem("progress_1", "0");
+        </script>
+        <script src="./renderer.js"></script>
+    </body>
 </html>

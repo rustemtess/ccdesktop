@@ -1,5 +1,8 @@
 {
-	"backToMenu": "BACK TO MENU",
-	"nextLevel": "NEXT LEVEL",
-	"instructions": "INSTRUCTIONS"
+  "backToMenu": "BACK TO MENU",
+  "nextLevel": "NEXT LEVEL",
+  "instructions": "INSTRUCTIONS",
+  "menu": "MENU",
+  "first_game": "COLOR PROGRESSIVE RAVEN MATRICES",
+  "level": "LEVEL"
 }
