@@ -142,9 +142,28 @@ class Draggable {
       //this.element.classList.add('bg-green-400');
       this.element.classList.remove("cursor-pointer");
       this.dropped = true;
+      const allPlaced = Array.from(
+        document.querySelectorAll(".draggable"),
+      ).filter((el) => {
+        return el.__draggableInstance?.dropped;
+      });
+      if (this.progress.currentLevel < 12) {
+        const progress = document.getElementById("doing");
+        const progressPercentage =
+          ((this.progress.currentLevel + allPlaced.length) /
+            this.progress.max) *
+          100; // Прогресс из 3 блоков
+        progress.style.width = `${progressPercentage}%`;
+        localStorage.setItem(
+          "progress_1",
+          Number(this.progress.currentLevel + this.progress.win),
+        );
+      }
     } else {
       this.element.style.transition = "transform 0.3s ease";
       this.element.style.transform = `translate(0px, 0px)`;
+      const successSound = document.getElementById("bad-answer-sound");
+      if (successSound) successSound.play();
     }
 
     this.dragging = false;
@@ -152,29 +171,11 @@ class Draggable {
     document.removeEventListener("pointermove", this.onPointerMove);
     document.removeEventListener("pointerup", this.onPointerUp);
 
-    // Проверка на победу
     const allPlaced = Array.from(
       document.querySelectorAll(".draggable"),
     ).filter((el) => {
       return el.__draggableInstance?.dropped;
     });
-
-    if (this.isProgress) {
-      const progress = document.getElementById("doing");
-      const progressPercentage =
-        ((this.progress.currentLevel + allPlaced.length) / this.progress.max) *
-        100; // Прогресс из 3 блоков
-      progress.style.width = `${progressPercentage}%`;
-      console.log(
-        this.progress.currentLevel,
-        allPlaced.length,
-        progressPercentage,
-      );
-      localStorage.setItem(
-        "progress_1",
-        Number(this.progress.currentLevel + this.progress.win),
-      );
-    }
 
     if (allPlaced.length === this.progress.win && !gameCompleted) {
       gameCompleted = true;

@@ -636,6 +636,9 @@ video {
 .bottom-\[1\.9vw\] {
   bottom: 1.9vw;
 }
+.bottom-\[2vw\] {
+  bottom: 2vw;
+}
 .end-1 {
   inset-inline-end: 0.25rem;
 }
@@ -656,6 +659,27 @@ video {
 }
 .top-0 {
   top: 0px;
+}
+.bottom-\[2\.1vw\] {
+  bottom: 2.1vw;
+}
+.bottom-\[2\.5vw\] {
+  bottom: 2.5vw;
+}
+.bottom-\[2\.4vw\] {
+  bottom: 2.4vw;
+}
+.right-\[3\.7vw\] {
+  right: 3.7vw;
+}
+.right-\[3\.6vw\] {
+  right: 3.6vw;
+}
+.right-\[3\.65vw\] {
+  right: 3.65vw;
+}
+.bottom-\[2\.2vw\] {
+  bottom: 2.2vw;
 }
 .isolate {
   isolation: isolate;
