@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Результаты</title>
+    <link href="./assets/css/main.css" rel="stylesheet" />
+</head>
+<body class="bg-cover flex flex-col items-center justify-center">
+
+    <h1 class="text-[1.4vw] mt-5 text-gray-800">Результат ваших ответов</h1>
+
+    <div class="flex gap-8 my-5" id="tablesWrapper">
+        <table id="tableA" class="hidden border-collapse border-2 border-gray-400">
+            <caption class="text-center text-lg font-semibold mb-2">Уровень A</caption>
+        </table>
+        <table id="tableAB" class="hidden border-collapse border-2 border-gray-400">
+            <caption class="text-center text-lg font-semibold mb-2">Уровень AB</caption>
+        </table>
+        <table id="tableB" class="hidden border-collapse border-2 border-gray-400">
+            <caption class="text-center text-lg font-semibold mb-2">Уровень B</caption>
+        </table>
+    </div>
+
+    <h2 class="my-4 text-[1.4vw] text-gray-800">
+        Общий балл: <span class="font-bold" id="commonPoint">0</span>
+    </h2>
+
+    <button
+        onclick="window.location.href = 'menu.html'"
+        id="next2"
+        class="text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-b-[0.4vw] bg-[#93D333] h-fit border-b-[#79B933] text-[#131F24] duration-150 font-medium hover:bg-[#93E533]"
+    >Вернуться в меню</button>
+
+    <script>
+        const arr = JSON.parse(localStorage.getItem('answers') || '{}');
+
+        function addRow(tableId, key, value) {
+            const tr = document.createElement('tr');
+
+            const td1 = document.createElement('td');
+            td1.innerText = key;
+            td1.className = 'p-2 py-1 border-2 border-gray-600 font-semibold text-[1.2vw] text-center';
+
+            const td2 = document.createElement('td');
+            td2.innerText = value;
+            td2.className = 'p-2 py-1 border-2 border-gray-600 font-semibold text-[1.2vw] text-center';
+
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            document.getElementById(tableId).appendChild(tr);
+        }
+
+        // Показываем таблицы только если есть данные
+        let hasA = false;
+        let hasAB = false;
+        let hasB = false;
+
+        Object.entries(arr).forEach(([key, value]) => {
+            if (key.startsWith('AB')) {
+                addRow('tableAB', key, value);
+                hasAB = true;
+            } else if (key.startsWith('A')) {
+                addRow('tableA', key, value);
+                hasA = true;
+            } else if (key.startsWith('B')) {
+                addRow('tableB', key, value);
+                hasB = true;
+            }
+        });
+
+        // Отображаем только таблицы, где есть строки
+        if (hasA) document.getElementById('tableA').classList.remove('hidden');
+        if (hasAB) document.getElementById('tableAB').classList.remove('hidden');
+        if (hasB) document.getElementById('tableB').classList.remove('hidden');
+
+        // Общий балл
+        document.getElementById('commonPoint').innerText = localStorage.getItem('result') || '0';
+
+        // Сброс состояния (если нужно)
+        localStorage.setItem("currentLevel", "0");
+        localStorage.setItem("point", "1");
+        localStorage.setItem("result", "0");
+    </script>
+
+</body>
+</html>

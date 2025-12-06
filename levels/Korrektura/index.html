@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../../assets/css/main.css" rel="stylesheet" /> 
+    <title>Корректурная проба: Устойчивость Зейіні</title>
+    <style>
+        /* ---------------------------------------------------------------------- */
+        /* ОСНОВНОЙ МАКЕТ: Body и Контейнеры */
+        /* ---------------------------------------------------------------------- */
+        
+        /* Фиксированная высота нижней панели (для расчета отступа) */
+        :root {
+            --bottom-bar-height: 85px; 
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+            margin: 0;
+            padding: 0;
+            padding-bottom: var(--bottom-bar-height); 
+        }
+
+        /* Верхняя панель (Прогресс) */
+        .progress-bar {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 5px;
+            padding-top: 20px;
+            padding-bottom: 5px;
+            gap: 20px;
+            flex-shrink: 0;
+        }
+
+        .progress-bar h2 {
+            font-size: clamp(14px, 2.5vw, 24px); 
+            font-weight: bold;
+        }
+        
+        .korrektura-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 10px;
+            width: 100%;
+            flex-grow: 1; 
+            max-width: 1500px;
+            margin: 0 auto; 
+            position: relative; 
+        }
+
+        /* ---------------------------------------------------------------------- */
+        /* БЛОК С ТЕКСТОМ (#text-area) */
+        /* ---------------------------------------------------------------------- */
+        #text-area {
+            width: 95%; 
+            max-width: 100%;
+            background-color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            padding: 15px;
+            line-height: 1.2; 
+            font-family: monospace; 
+            word-wrap: break-word;
+            user-select: none;
+            
+            flex-grow: 1; 
+            height: auto; 
+            margin-top: 15px;
+            margin-bottom: 15px;
+            overflow-y: auto; 
+            max-height: 70vh; 
+        }
+
+        /* ---------------------------------------------------------------------- */
+        /* СТИЛИ БУКВЫ (letter) */
+        /* ---------------------------------------------------------------------- */
+        .letter {
+            display: inline-block;
+            cursor: pointer;
+            padding: 10px 10px; 
+            margin: 12px; 
+            font-weight: bolder;
+            font-size: clamp(45px, 4.5vw, 42px); 
+            transition: background-color 0.1s;
+        }
+
+        @media (min-width: 768px) {
+            .letter {
+                font-size: clamp(18px, 2.5vw, 30px); 
+                padding: 3px 2px; 
+            }
+            #text-area {
+                max-height: 76vh; 
+            }
+        }
+        /* --- Стили состояния букв --- */
+        .letter:hover:not(.marked):not(.missed) { background-color: #f0f0f0; }
+        .marked { text-decoration: line-through !important; color: #4CAF50 !important; cursor: default; }
+        .error-wrong { color: white; background-color: #ff3b3b; cursor: default; text-decoration: none !important; }
+        .missed-target { background-color: #ffbb00 !important; color: #333 !important; text-decoration: none !important; }
+
+        /* ---------------------------------------------------------------------- */
+        /* ОВЕРЛЕЙ */
+        /* ---------------------------------------------------------------------- */
+        #overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%; 
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); 
+            z-index: 25; 
+            border-radius: 8px;
+        }
+
+        /* ---------------------------------------------------------------------- */
+        /* НОВЫЙ КРАСИВЫЙ СТИЛЬ ДЛЯ ОКНА РЕЗУЛЬТАТОВ (results-box) */
+        /* ---------------------------------------------------------------------- */
+        .results-box {
+            width: 95%;
+            max-width: 500px;
+            background-color: #fff;
+            padding: 0; 
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            display: none;
+            font-size: 1.1em;
+            z-index: 30;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .rb-header {
+            background-color: #37464F;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .rb-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .rb-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            background-color: #f5f5f5;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .rb-efficiency {
+            background-color: #e8f5e9; 
+            border: 1px solid #c8e6c9;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .rb-value {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: #333;
+        }
+        
+        /* Цвета для значений */
+        .val-correct { color: #2e7d32; }
+        .val-wrong, .val-missed { color: #d32f2f; }
+        .val-total { color: #007bff; }
+
+
+        /* ---------------------------------------------------------------------- */
+        /* ФИКСИРОВАННЫЙ БЛОК КНОПОК ВНИЗУ (Bottom Bar) */
+        /* ---------------------------------------------------------------------- */
+        .bottom-bar {
+            position: fixed; 
+            bottom: 10px;
+            left: 0;
+            width: 100%; 
+            background-color: white;
+            z-index: 40; 
+            padding: 20px 5px; 
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            height: var(--bottom-bar-height); 
+            box-sizing: border-box; 
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center">
+
+    <div class="progress-bar">
+        <div class="flex items-center gap-2">
+            <img src="../../assets/img/timer.png" width="25" />
+            <h2 class="text-red-600" id="time-left">03:00</h2>
+        </div>
+        <div class="flex items-center gap-2">
+            <img src="../../assets/img/correct.png" width="25" />
+            <h2 class="text-green-600" id="correct-count">0</h2>
+        </div>
+        <div class="flex items-center gap-2">
+            <img src="../../assets/img/incorrect.png" width="20" />
+            <h2 class="text-red-600" id="error-count">0</h2>
+        </div>
+    </div>
+
+    <div class="korrektura-container">
+        
+        <div id="overlay"></div> 
+
+        <div id="results-box" class="results-box">
+            <div class="rb-header">
+                </div>
+            <div class="rb-content">
+                <div id="stat-total-marked" class="rb-item"></div>
+                <div id="stat-correct" class="rb-item"></div>
+                <div id="stat-error-wrong" class="rb-item"></div>
+                <div id="stat-error-missed" class="rb-item"></div>
+                <div id="stat-efficiency" class="rb-item rb-efficiency"></div>
+            </div>
+        </div>
+        
+        <div id="text-area">
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+       <button 
+            onclick="resetGame(true)" 
+            class="text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-[0.15vw] border-b-[0.4vw] h-fit border-gray-600 border-b-gray-600 text-gray-600 duration-150 font-medium hover:bg-[rgba(0,0,0,0.1)]"
+            id="reset-button">
+        
+       </button>
+       <button 
+        class="text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-[0.15vw] border-b-[0.4vw] h-fit border-gray-600 border-b-gray-600 text-gray-600 duration-150 font-medium hover:bg-[rgba(0,0,0,0.1)]"
+            id="backToMenu"   
+        onclick="window.location.href = '../../menu.html'">
+        
+       </button>
+    </div>
+
+    <script src="../../renderer.js"></script>
+
+    <audio id="sound-correct" src="../../assets/sounds/success.mp3" preload="auto"></audio>
+    <audio id="sound-wrong" src="../../assets/sounds/bad_answer.mp3" preload="auto"></audio>
+
+    <script>
+        // --- ПЕРЕВОДЫ И ЛОКАЛИЗАЦИЯ (ТОЛЬКО ДЛЯ ОКНА РЕЗУЛЬТАТОВ) ---
+        const locale = localStorage.getItem("locale") || "ru";
+
+        const translations = {
+            ru: {
+                title: "📊 Результаты Корректурной пробы",
+                total: "Всего целевых символов '{target}'",
+                correct: "✅ Правильно зачеркнуто (S)",
+                wrong: "❌ Ошибки - зачеркнуты не те (O)",
+                missed: "⚠️ Ошибки - пропуски (P)",
+                efficiency: "Продуктивность (S / (S+P+O))"
+            },
+            en: {
+                title: "📊 Proofreading Test Results",
+                total: "Total target symbols '{target}'",
+                correct: "✅ Correctly crossed out (S)",
+                wrong: "❌ Errors - wrong marks (O)",
+                missed: "⚠️ Errors - omissions (P)",
+                efficiency: "Efficiency (S / (S+P+O))"
+            },
+            kz: {
+                title: "📊 Корректуралық сынама нәтижелері",
+                total: "Барлығы '{target}' нысаналық таңбалар",
+                correct: "✅ Дұрыс сызылған (S)",
+                wrong: "❌ Қателер - дұрыс емес белгілер (O)",
+                missed: "⚠️ Қателер - жіберіп алу (P)",
+                efficiency: "Өнімділік (S / (S+P+O))"
+            }
+        };
+
+        const t = translations[locale] || translations.ru;
+
+
+        const TOTAL_TIME = 180; 
+        const TARGET_LETTER = 'С';
+        const SKIPPED_LETTER = 'Н';
+        
+        const RAW_TEXT = `
+            СХАВСХЕВИХНАИСНХВХВКСНАИСВХВХЕНАИСНЕВХАК
+            ВНХИВСНАВСАВСНАЕКЕАХВКЕСВСНАИСАИСНАВХНВК
+            НХИСХВХЕКВХРВХЕИСНЕИНАИЕНКХКИКХЕКВКИСВХИ
+            ХАКВНСКАИСВЕКВХНАИСНХЕКХИСНАКСКВХКВНАВСН
+            ИСНАИХАЕХКИСНАИКХЕХЕИСНАХКЕКХВИСНАИХВИКХ
+            СНАИСВНКХВАИСНАХЕКЕХСНАКСВЕЕВЕАИСНАСНКИВ
+            КХКЕКНВИСНКХВЕХСНАИСКЕСИКНАЕСНКХКВИХКАКС
+            АИСНАЕХКВЕНВКХЕАИСНКАИКНВЕВНКВХАВЕИВИСНА
+            КАХВЕИВНАХИЕНАИКВИЕАКЕИВАКСВЕИКСНАВАХЕСВ
+            НКЕСНКСВХИЕСВХКНКВСКВЕВКНИЕСАВИЕХЕВНДИЕН
+            КЕИВКАИСНАСНАИСХАКВННАКСХАИЕНАСНАИСВКХЕВ
+            ЕВХКХСНЕИСНАИСНКВКХВЕКЕВКВНАИСНАИСНКЕВКХ
+            АВСНАХКАСЕСНАИСЕСХКВАИСНАСАВКХСНЕИСХИХЕК
+            ВИКВЕНАИЕНЕКХАВИХНВИХКВЕХНВИСНВСАЕХИСНАИ
+            НКЕХВИВНАЕИСНВИАЕВАЕНХВХВИСНАЕИЕКАИВЕКЕХ
+            КЕИСНЕСАЕИХВКЕВЕИСНАЕАИСНКВЕХИКХНКЕАИСНА
+            САКАЕКХЕВСКХЕКХНАИСНКВЕВЕСНАИСЕКХЕКНАИСН
+            ИСНЕИСНВИЕХКВЕХИВНАКИСХАИЕВКЕВКИЕХЕИСНАИ
+            ВХВКСИСНАИАИЕНАКСХКИВХНИКИСНАИВЕСНАКНЕХС
+            СНАИКВЕХКВКЕСВКСНХИАСНАКСХКХВХЕАЕСКСЕАИК
+            ИСНАЕХКЕХКЕИХНВХАКЕИСНАИКХВСХНВИЕХАЕСVЕК
+        `.replace(/\s/g, ''); 
+        
+        const TOTAL_TARGETS = (RAW_TEXT.match(new RegExp(TARGET_LETTER, 'g')) || []).length;
+        
+        let gameActive = false;
+        let timeLeft = TOTAL_TIME;
+        let timerInterval = null;
+        let startTime = null;
+        
+        let correctMarks = 0;
+        let errorWrong = 0;
+        
+        // DOM элементы
+        const textArea = document.getElementById('text-area');
+        const timeLeftEl = document.getElementById('time-left');
+        const correctCountEl = document.getElementById('correct-count');
+        const errorCountEl = document.getElementById('error-count');
+        const resultsBox = document.getElementById('results-box');
+        const overlay = document.getElementById('overlay'); 
+        const audioCorrect = document.getElementById('sound-correct');
+        const audioWrong = document.getElementById('sound-wrong');
+
+
+        // --- Инициализация и Управление Тестом ---
+
+        function generateText() {
+            textArea.innerHTML = '';
+            const letters = RAW_TEXT.split('');
+
+            letters.forEach((char, index) => {
+                const span = document.createElement('span');
+                span.className = 'letter'; 
+                span.textContent = char;
+                span.dataset.char = char;
+                span.dataset.index = index; 
+                span.addEventListener('click', handleLetterClick);
+                textArea.appendChild(span);
+            });
+        }
+        
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+        }
+        
+        function startTimer() {
+            gameActive = true;
+            startTime = Date.now();
+            
+            timerInterval = setInterval(() => {
+                const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+                timeLeft = TOTAL_TIME - elapsedSeconds;
+                
+                if (timeLeft <= 0) {
+                    timeLeft = 0;
+                    clearInterval(timerInterval);
+                    endGame(); 
+                }
+                
+                timeLeftEl.textContent = formatTime(timeLeft);
+            }, 1000);
+        }
+
+        function handleLetterClick(event) {
+            const span = event.target;
+            const clickedChar = span.dataset.char;
+
+            if (clickedChar === TARGET_LETTER && !gameActive) {
+                startTimer();
+            }
+
+            if (!gameActive || span.classList.contains('marked') || span.classList.contains('error-wrong')) return;
+
+            if (clickedChar === TARGET_LETTER) {
+                span.classList.add('marked');
+                correctMarks++;
+                correctCountEl.textContent = correctMarks;
+
+                if (audioCorrect) {
+                   audioCorrect.currentTime = 0;
+                   audioCorrect.play().catch(() => {});
+                }
+                
+            } else {
+                span.classList.add('error-wrong');
+                errorWrong++;
+                errorCountEl.textContent = errorWrong;
+
+                if (audioWrong) {
+                    audioWrong.currentTime = 0;
+                    audioWrong.play().catch(() => {});
+                }
+            }
+        }
+        
+        function endGame() {
+            gameActive = false;
+            clearInterval(timerInterval);
+            
+            document.querySelectorAll('.letter').forEach(span => {
+                span.style.pointerEvents = 'none';
+            });
+
+            let errorMissed = 0;
+            document.querySelectorAll('.letter').forEach(span => {
+                if (span.dataset.char === TARGET_LETTER && !span.classList.contains('marked')) {
+                    errorMissed++;
+                    span.classList.add('missed-target'); 
+                }
+            });
+
+            overlay.style.display = 'block'; 
+            displayResults(errorMissed);
+        }
+
+        function displayResults(errorMissed) {
+            const N = TOTAL_TARGETS; 
+            const S = correctMarks; 
+            const O = errorWrong; 
+            const P = errorMissed; 
+
+            const denominator = (S + O + P);
+            const efficiency = denominator > 0 ? (S / denominator) * 100 : 0;
+            
+            // Устанавливаем заголовок
+            resultsBox.querySelector('.rb-header').textContent = t.title;
+
+            // Функция для создания форматированной строки
+            const createItem = (label, value, valueClass) => {
+                return `
+                    <span class="rb-label">${label}</span>
+                    <span class="rb-value ${valueClass}">${value}</span>
+                `;
+            };
+
+            // Применяем переводы в новой структуре
+            document.getElementById('stat-total-marked').innerHTML = createItem(
+                `${t.total.replace('{target}', TARGET_LETTER)}`,
+                N,
+                'val-total'
+            );
+            
+            document.getElementById('stat-correct').innerHTML = createItem(
+                `${t.correct}`,
+                S,
+                'val-correct'
+            );
+            
+            document.getElementById('stat-error-wrong').innerHTML = createItem(
+                `${t.wrong}`,
+                O,
+                'val-wrong'
+            );
+            
+            document.getElementById('stat-error-missed').innerHTML = createItem(
+                `${t.missed}`,
+                P,
+                'val-missed'
+            );
+            
+            document.getElementById('stat-efficiency').innerHTML = createItem(
+                `${t.efficiency}`,
+                `${efficiency.toFixed(2)}%`,
+                'val-efficiency'
+            );
+            
+            resultsBox.style.display = 'block';
+        }
+
+        // Функция сброса игры
+        function resetGame() {
+            clearInterval(timerInterval);
+            gameActive = false;
+            timeLeft = TOTAL_TIME;
+            correctMarks = 0;
+            errorWrong = 0;
+            startTime = null;
+
+            timeLeftEl.textContent = formatTime(TOTAL_TIME);
+            correctCountEl.textContent = '0';
+            errorCountEl.textContent = '0';
+            
+            resultsBox.style.display = 'none';
+            overlay.style.display = 'none'; 
+            
+            // Устанавливаем заголовок в окне результатов при сбросе
+            resultsBox.querySelector('.rb-header').textContent = t.title;
+
+            generateText();
+            document.querySelectorAll('.letter').forEach(span => {
+                span.style.pointerEvents = 'auto'; 
+                span.style.backgroundColor = 'transparent';
+                span.classList.remove('marked', 'error-wrong', 'missed-target');
+                span.style.color = 'inherit';
+                span.style.textDecoration = 'none';
+            });
+        }
+
+        window.onload = resetGame;
+    </script>
+
+</body>
+</html>

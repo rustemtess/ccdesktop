@@ -1,0 +1,20 @@
+{
+    "backToMenu": "BACK TO MENU",
+    "nextLevel": "NEXT LEVEL",
+    "instructions": "INSTRUCTIONS",
+    "menu": "MENU",
+    "first_game": "COLOR PROGRESSIVE RAVEN MATRICES",
+    "second_game": "FIND THE EXTRA FIGURE",
+    "third_game": "FIND THE EXTRA OBJECT",
+    "level": "LEVEL",
+    "result": "FIND OUT THE RESULT",
+    "reset": "RESET TEST",
+    "parnye_analog": "PAIR ANALOGIES",
+    "simple_analog": "SIMPLE ANALOGIES",
+    "korrektura": "CORRECTIVE TEST",
+    "test_schulte": "SCHULTE TEST",
+    "neverbal": "SIMPLE NONVERBAL ANALOGIES",
+    "group_raven": "RAVEN'S COLORED MATRICES",
+    "group_exclude": "ODD ONE OUT",
+    "group_analog": "ANALOGIES"
+}

@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Центр компетенций</title>
+        <link href="../../../assets/css/main.css" rel="stylesheet" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            /* Main game container for images */
+            #game-elements-container {
+                display: flex; /* Adjust as needed for your desired layout */
+                gap: 20px;
+                padding: 20px;
+                min-width: 500px; /* Example minimum width */
+                min-height: 400px; /* Example minimum height */
+                justify-content: center; /* Центрируем содержимое по горизонтали */
+                align-items: center; /* Центрируем содержимое по вертикали */
+            }
+
+            /* Selectable image container styles */
+            .selectable.image-container {
+                width: 150px; /* Adjust size as needed for your images */
+                height: 150px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                cursor: pointer; /* Курсор при наведении */
+                transition: transform 0.1s ease;
+                border-radius: 8px; /* Optional: rounded corners for image containers */
+                box-sizing: border-box; /* Important for border not to increase size */
+                padding: 5px; /* Add some padding if images are slightly smaller than container */
+            }
+            .selectable.image-container:hover {
+                transform: scale(1.05); /* Slight enlargement on hover */
+            }
+            .selectable.correct-selected {
+                border: 3px solid #4ade80; /* Green border for correct selection */
+            }
+            .selectable.incorrect-selected {
+                border: 3px solid #ef4444; /* Red border for incorrect selection */
+            }
+
+            /* No need for specific shape styles (circle, square, triangle, diamond, star) anymore */
+            /* The .drop-zone is also no longer needed for interaction */
+            .drop-zone {
+                display: none;
+            }
+
+            /* Tailwind color classes will be applied directly by JS */
+            /* e.g., bg-red-500, bg-blue-500, border-red-500 (for triangles) */
+
+            /* Ensure your existing layout classes from main.css are compatible */
+            .w-\[1\.8vw\] { width: 1.8vw; }
+            .text-\[1\.5vw\] { font-size: 1.5vw; }
+            .w-\[70\%\] { width: 70%; }
+            .h-\[1vw\] { height: 1vw; }
+            .w-\[1\.4vw\] { width: 1.4vw; }
+            .text-\[1\.4vw\] { font-size: 1.4vw; }
+            .text-\[1\.2vw\] { font-size: 1.2vw; }
+            .px-\[1\.6vw\] { padding-left: 1.6vw; padding-right: 1.6vw; }
+            .py-\[0\.7vw\] { padding-top: 0.7vw; padding-bottom: 0.7vw; }
+            .rounded-\[1\.3vw\] { border-radius: 1.3vw; }
+            .border-\[0\.15vw\] { border-width: 0.15vw; }
+            .border-b-\[0\.4vw\] { border-bottom-width: 0.4vw; }
+            .h-\[7vw\] { height: 7vw; }
+            .w-\[9\.2vw\] { width: 9.2vw; }
+            .h-\[5\.8vw\] { height: 5.8vw; }
+            .w-\[10\.2vw\] { width: 10.2vw; }
+            .h-\[6\.3vw\] { height: 6.3vw; }
+        </style>
+    </head>
+    <body class="bg-cover">
+        <div class="z-10 flex flex-col h-svh w-full">
+            <div class="w-full flex justify-center items-center p-5 gap-5">
+                <div class="flex items-center gap-2">
+                    <img src="../../../assets/img/heart.png" width="24" class="w-[1.8vw]" />
+                    <h2 class="text-red-600 font-bold text-[1.5vw]" id="chance">1</h2>
+                </div>
+                <div
+                    id="progress"
+                    class="w-[70%] bg-[#37464F] h-[1vw] rounded-xl"
+                >
+                    <div
+                        id="doing"
+                        class="w-0 bg-yellow-400 h-full rounded-xl"
+                    ></div>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <img src="../../../assets/img/star.png" width="24" class="w-[1.4vw]" />
+                    <h2 class="text-yellow-400 text-[1.4vw] font-bold">
+                        <span id="level"></span>
+                    </h2>
+                </div>
+            </div>
+
+            <div
+                id="effect"
+                class="hidden absolute top-0 left-0 w-full h-full pointer-events-none"
+            ></div>
+
+            <div
+                class="flex-1 flex flex-col w-full h-svh justify-center items-center gap-10"
+            >
+                <div id="game-elements-container" class="relative">
+                    </div>
+            </div>
+
+            <div class="p-5 h-[7vw] flex justify-center gap-4">
+                <button id="backToMenu" class="text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-[0.15vw] border-b-[0.4vw] h-fit border-gray-600 border-b-gray-600 text-gray-600 duration-150 font-medium hover:bg-[rgba(0,0,0,0.1)]">Back to Menu</button>
+                <button
+                    id="next"
+                    class="hidden text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-b-[0.4vw] bg-[#93D333] h-fit border-b-[#79B933] text-[#131F24] duration-150 font-medium hover:bg-[#93E533]"
+                >Next Level</button> <audio id="success-sound" src="../../../assets/sounds/success.mp3"></audio>
+                <audio id="bad-answer-sound" src="../../../assets/sounds/bad_answer.mp3"></audio>
+            </div>
+        </div>
+
+        <script src="../../../renderer.js"></script>
+        <script src="../../../module/module.js"></script>
+        <script src="../../../module/Effects.js"></script>
+        <script src="../../../module/ExcludingImg.js"></script>
+        <script src="game.js"></script>
+    </body>
+</html>

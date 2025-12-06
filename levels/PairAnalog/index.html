@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../../assets/css/main.css" rel="stylesheet" />
+    <title>Парные аналогии (Тест на актуализацию)</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            width: 100%;
+        }
+
+        #analogy-area {
+            width: 100%; 
+            max-width: 1400px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            line-height: 1.6; 
+            font-family: Arial, sans-serif;
+            font-size: clamp(16px, 3vw, 20px);
+            user-select: none;
+            max-height: 70vh; 
+            overflow-y: auto; 
+            margin-top: 15px; 
+            margin-bottom: 20px;
+        }
+
+        .analogy-item {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #ddd;
+        }
+        .analogy-item:last-child {
+            border-bottom: none;
+        }
+
+        .analogy-prompt {
+            font-weight: bold; 
+            color: #333;
+        }
+
+        .answer-box {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hidden-answer {
+            color: transparent;
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+            font-weight: bold;
+        }
+        .visible-answer {
+            color: #007bff;
+            background-color: #e6f2ff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* АДАПТИРОВАННЫЙ СТИЛЬ КНОПОК */
+        .custom-button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            
+            /* ИСПРАВЛЕНО: Теперь все custom-button жирные, включая нижние кнопки */
+            font-weight: 600;
+            
+            font-size: clamp(12px, 2.5vw, 18px); 
+            padding: 0.7vw 1.6vw;
+            border-radius: 1.3vw;
+            border: 0.15vw solid;
+            border-bottom-width: 0.4vw; 
+            
+            transition: all 0.15s;
+        }
+
+        /* Серый цвет для кнопок "Сбросить/Назад" */
+        .nav-button {
+            border-color: #4b5563; /* Tailwind gray-600 */
+            color: #4b5563; /* Tailwind gray-600 */
+        }
+        .nav-button:hover:not(:disabled) {
+             background-color: rgba(0,0,0,0.1);
+        }
+
+        /* Кнопки действий */
+        .reveal-btn {
+            background-color: #f0f0f0;
+            border-color: #999;
+            color: #333;
+        }
+        .reveal-btn:hover:not(:disabled) {
+             background-color: #ddd;
+        }
+
+        .score-btn.correct {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+        .score-btn.correct:hover:not(:disabled) {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .score-btn.wrong {
+            border-color: #f44336;
+            color: #f44336;
+        }
+        .score-btn.wrong:hover:not(:disabled) {
+            background-color: rgba(244, 67, 54, 0.1);
+        }
+
+        .score-btn:disabled, .reveal-btn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        /* Фиксированная нижняя панель */
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center pb-20">
+
+    <div class="w-full flex justify-center items-center p-5 gap-5 text-xl">
+        <div class="flex items-center gap-2">
+            <img src="../../assets/img/correct.png" width="25" />
+            <h2 class="text-green-600 font-bold" id="correct-count">0</h2>
+        </div>
+        <div class="flex items-center gap-2">
+            <img src="../../assets/img/incorrect.png" width="20" />
+            <h2 class="text-red-600 font-bold" id="wrong-count">0</h2>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="analogy-area">
+            </div>
+    </div>
+
+    <div class="fixed-footer">
+        <button 
+            onclick="resetGame()" 
+            id="reset-button"
+            class="custom-button nav-button">
+            </button>
+        <button 
+            onclick="window.location.href = '../../menu.html'"
+            id="backToMenu" 
+            class="custom-button nav-button">
+            </button>
+    </div>
+
+    <script src="../../renderer.js"></script>
+
+    <script>
+        // --- ЛОКАЛИЗАЦИЯ И ПЕРЕВОД ---
+        const locale = localStorage.getItem("locale") || "ru";
+
+        const translations = {
+            ru: {
+                reveal: "Показать ответ",
+                correct: "✅ Верно",
+                wrong: "❌ Неверно",
+                
+                // РУССКИЕ АНАЛОГИИ
+                analogies: [
+                    { id: 1, left: "Школа - ученик", right: "Больница - ...", answer: "больной (пациент)" },
+                    { id: 2, left: "Задача - решение", right: "Вопрос - ...", answer: "ответ" },
+                    { id: 3, left: "Часы - время", right: "Градусник - ...", answer: "температура" },
+                    { id: 4, left: "Луг - трава", right: "Лес - ...", answer: "деревья" },
+                    { id: 5, left: "Рабочий - город", right: "Фермер - ...", answer: "деревня" },
+                    { id: 6, left: "Море - вода", right: "Небо - ...", answer: "воздух" },
+                    { id: 7, left: "Июль - лето", right: "Апрель - ...", answer: "весна" },
+                    { id: 8, left: "Охотник - ружье", right: "Рыбак - ...", answer: "удочка" },
+                    { id: 9, left: "День - обед", right: "Вечер - ...", answer: "ужин" },
+                    { id: 10, left: "Дождь - сырость", right: "Жара - ...", answer: "сухость" },
+                    { id: 11, left: "Дом - кирпич", right: "Слово - ...", answer: "буква" },
+                    { id: 12, left: "Художник - картина", right: "Писатель - ...", answer: "книга" },
+                    { id: 13, left: "Яд - заболевание", right: "Лекарство - ...", answer: "лечение" },
+                    { id: 14, left: "Хулиганство - наказание", right: "Подвиг - ...", answer: "награждение" }
+                ]
+            },
+            en: {
+                reveal: "Show Answer",
+                correct: "✅ Correct",
+                wrong: "❌ Wrong",
+                
+                // АНГЛИЙСКИЕ АНАЛОГИИ
+                analogies: [
+                    { id: 1, left: "School - student", right: "Hospital - ...", answer: "patient" },
+                    { id: 2, left: "Problem - solution", right: "Question - ...", answer: "answer" },
+                    { id: 3, left: "Clock - time", right: "Thermometer - ...", answer: "temperature" },
+                    { id: 4, left: "Meadow - grass", right: "Forest - ...", answer: "trees" },
+                    { id: 5, left: "Worker - city", right: "Farmer - ...", answer: "village" },
+                    { id: 6, left: "Sea - water", right: "Sky - ...", answer: "air" },
+                    { id: 7, left: "July - summer", right: "April - ...", answer: "spring" },
+                    { id: 8, left: "Hunter - gun", right: "Fisherman - ...", answer: "fishing rod" },
+                    { id: 9, left: "Day - lunch", right: "Evening - ...", answer: "dinner" },
+                    { id: 10, left: "Rain - dampness", right: "Heat - ...", answer: "dryness" },
+                    { id: 11, left: "House - brick", right: "Word - ...", answer: "letter" },
+                    { id: 12, left: "Artist - painting", right: "Writer - ...", answer: "book" },
+                    { id: 13, left: "Poison - disease", right: "Medicine - ...", answer: "treatment" },
+                    { id: 14, left: "Hooliganism - punishment", right: "Feat - ...", answer: "reward" }
+                ]
+            },
+            kz: {
+                reveal: "Жауабын көрсету",
+                correct: "✅ Дұрыс",
+                wrong: "❌ Қате",
+                
+                // КАЗАХСКИЕ АНАЛОГИИ
+                analogies: [
+                    { id: 1, left: "Мектеп - оқушы", right: "Аурухана - ...", answer: "науқас (пациент)" },
+                    { id: 2, left: "Есеп - шешім", right: "Сұрақ - ...", answer: "жауап" },
+                    { id: 3, left: "Сағат - уақыт", right: "Термометр - ...", answer: "температура" },
+                    { id: 4, left: "Шалғын - шөп", right: "Орман - ...", answer: "ағаштар" },
+                    { id: 5, left: "Жұмысшы - қала", right: "Фермер - ...", answer: "ауыл" },
+                    { id: 6, left: "Теңіз - су", right: "Аспан - ...", answer: "ауа" },
+                    { id: 7, left: "Шілде - жаз", right: "Сәуір - ...", answer: "көктем" },
+                    { id: 8, left: "Аңшы - мылтық", right: "Балықшы - ...", answer: "қармақ" },
+                    { id: 9, left: "Күн - түскі ас", right: "Кеш - ...", answer: "кешкі ас" },
+                    { id: 10, left: "Жаңбыр - ылғал", right: "Ыстық - ...", answer: "құрғақтық" },
+                    { id: 11, left: "Үй - кірпіш", right: "Сөз - ...", answer: "әріп" },
+                    { id: 12, left: "Суретші - сурет", right: "Жазушы - ...", answer: "кітап" },
+                    { id: 13, left: "У - ауру", right: "Дәрі - ...", answer: "емдеу" },
+                    { id: 14, left: "Бұзақылық - жаза", right: "Ерлік - ...", answer: "марапат" }
+                ]
+            }
+        };
+
+        const t = translations[locale] || translations.ru;
+        const pairAnalogiesData = t.analogies; 
+
+        let correctCount = 0;
+        let wrongCount = 0;
+
+        const analogyArea = document.getElementById('analogy-area');
+        const correctCountEl = document.getElementById('correct-count');
+        const wrongCountEl = document.getElementById('wrong-count');
+        
+        function generateAnalogies() {
+            analogyArea.innerHTML = '';
+            pairAnalogiesData.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'analogy-item';
+                itemDiv.dataset.id = item.id;
+                
+                const prompt = document.createElement('div');
+                prompt.className = 'analogy-prompt';
+                prompt.innerHTML = `${item.id}. ${item.left} :: ${item.right} <span id="answer-${item.id}" class="hidden-answer">...</span>`;
+
+                const answerBox = document.createElement('div');
+                answerBox.className = 'answer-box';
+                answerBox.id = `box-${item.id}`;
+                
+                const revealBtn = document.createElement('button');
+                revealBtn.className = 'custom-button reveal-btn';
+                revealBtn.textContent = t.reveal; 
+                revealBtn.onclick = () => revealAnswer(item.id, item.answer);
+
+                const correctBtn = document.createElement('button');
+                correctBtn.className = 'custom-button score-btn correct';
+                correctBtn.textContent = t.correct; 
+                correctBtn.disabled = true;
+                correctBtn.onclick = () => scoreAnswer(item.id, 'correct');
+
+                const wrongBtn = document.createElement('button');
+                wrongBtn.className = 'custom-button score-btn wrong';
+                wrongBtn.textContent = t.wrong; 
+                wrongBtn.disabled = true;
+                wrongBtn.onclick = () => scoreAnswer(item.id, 'wrong');
+
+                answerBox.appendChild(revealBtn);
+                answerBox.appendChild(correctBtn);
+                answerBox.appendChild(wrongBtn);
+                
+                itemDiv.appendChild(prompt);
+                itemDiv.appendChild(answerBox);
+                analogyArea.appendChild(itemDiv);
+            });
+        }
+
+        function revealAnswer(id, answer) {
+            const answerEl = document.getElementById(`answer-${id}`);
+            const boxEl = document.getElementById(`box-${id}`);
+            
+            answerEl.textContent = answer;
+            answerEl.classList.remove('hidden-answer');
+            answerEl.classList.add('visible-answer');
+
+            boxEl.querySelector('.reveal-btn').disabled = true;
+            
+            boxEl.querySelector('.score-btn.correct').disabled = false;
+            boxEl.querySelector('.score-btn.wrong').disabled = false;
+        }
+
+        function scoreAnswer(id, type) {
+            const boxEl = document.getElementById(`box-${id}`);
+            
+            boxEl.querySelectorAll('.custom-button').forEach(btn => btn.disabled = true);
+            
+            if (type === 'correct') {
+                correctCount++;
+            } else {
+                wrongCount++;
+            }
+            correctCountEl.textContent = correctCount;
+            wrongCountEl.textContent = wrongCount;
+        }
+
+        function resetGame() {
+            correctCount = 0;
+            wrongCount = 0;
+            correctCountEl.textContent = '0';
+            wrongCountEl.textContent = '0';
+            
+            generateAnalogies();
+        }
+
+        window.onload = resetGame;
+    </script>
+</body>
+</html>

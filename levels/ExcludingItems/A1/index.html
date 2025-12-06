@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Shape Sorting Game</title>
+        <link href="../../../assets/css/main.css" rel="stylesheet" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            /* Main game container for shapes and drop zones */
+            #game-elements-container {
+                display: flex; /* Adjust as needed for your desired layout */
+                gap: 20px;
+                padding: 20px;
+                min-width: 500px; /* Example minimum width */
+                min-height: 400px; /* Example minimum height */
+                justify-content: center; /* Центрируем содержимое по горизонтали */
+                align-items: center; /* Центрируем содержимое по вертикали */
+
+            }
+
+            /* Selectable shape styles (formerly draggable) */
+            .selectable {
+                width: 130px;  /* Fixed size for all shapes */
+                height: 130px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                color: white; /* Цвет текста на фигурах */
+                position: relative;
+                cursor: pointer; /* Курсор при наведении */
+                transition: transform 0.1s ease; /* Убрал box-shadow из transition */
+                border-radius: 8px; /* Default for squares, overridden for circles */
+                box-sizing: border-box; /* Важно для рамки, чтобы не увеличивать размер */
+            }
+            .selectable:hover {
+                transform: scale(1.05); /* Легкое увеличение при наведении */
+                /* box-shadow: 0 0 10px rgba(0,0,0,0.3); */ /* Убрал тень при наведении */
+            }
+            .selectable.correct-selected { /* Новое имя класса для правильного выбора */
+                border: 3px solid #4ade80; /* Зеленая рамка при правильном выборе */
+                /* Убеждаемся, что остальные стили фигуры сохраняются */
+            }
+            .selectable.incorrect-selected { /* Новый класс для неправильного выбора */
+                border: 3px solid #ef4444; /* Красная рамка при неправильном выборе */
+            }
+
+            .drop-zone {
+                display: none; /* Скрываем зону сброса, так как она больше не нужна для механики */
+            }
+
+            /* Shape specific styles */
+            .circle {
+                border-radius: 50%;
+            }
+            .square {
+                border-radius: 0;
+            }
+            .triangle {
+                width: 130px;
+                height: 130px;
+                border-left: 70px solid transparent;
+                border-right: 70px solid transparent;
+                border-bottom-width: 130px;
+                border-bottom-style: solid;
+                background-color: transparent !important;
+                border-radius: 0;
+            }
+
+            /* НОВЫЕ ФИГУРЫ: Ромб */
+            .diamond {
+                width: 140px;
+                height: 140px;
+                background-color: transparent;
+                clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+                -webkit-clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            }
+
+            /* НОВЫЕ ФИГУРЫ: Звезда */
+            .star {
+                width: 140px;
+                height: 140px;
+                position: relative;
+                background-color: transparent;
+                clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+                -webkit-clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            }
+
+            /* Tailwind color classes will be applied directly by JS */
+            /* e.g., bg-red-500, bg-blue-500, border-red-500 (for triangles) */
+
+            /* Ensure your existing layout classes from main.css are compatible */
+            .w-\[1\.8vw\] { width: 1.8vw; }
+            .text-\[1\.5vw\] { font-size: 1.5vw; }
+            .w-\[70\%\] { width: 70%; }
+            .h-\[1vw\] { height: 1vw; }
+            .w-\[1\.4vw\] { width: 1.4vw; }
+            .text-\[1\.4vw\] { font-size: 1.4vw; }
+            .text-\[1\.2vw\] { font-size: 1.2vw; }
+            .px-\[1\.6vw\] { padding-left: 1.6vw; padding-right: 1.6vw; }
+            .py-\[0\.7vw\] { padding-top: 0.7vw; padding-bottom: 0.7vw; }
+            .rounded-\[1\.3vw\] { border-radius: 1.3vw; }
+            .border-\[0\.15vw\] { border-width: 0.15vw; }
+            .border-b-\[0\.4vw\] { border-bottom-width: 0.4vw; }
+            .h-\[7vw\] { height: 7vw; }
+            .w-\[9\.2vw\] { width: 9.2vw; } /* Adjusted for drop zone */
+            .h-\[5\.8vw\] { height: 5.8vw; } /* Adjusted for drop zone */
+            .w-\[10\.2vw\] { width: 10.2vw; } /* Adjusted for selectable */
+            .h-\[6\.3vw\] { height: 6.3vw; } /* Adjusted for selectable */
+
+        </style>
+    </head>
+    <body class="bg-cover">
+        <div class="z-10 flex flex-col h-svh w-full">
+            <div class="w-full flex justify-center items-center p-5 gap-5">
+                <div class="flex items-center gap-2">
+                    <img src="../../../assets/img/heart.png" width="24" class="w-[1.8vw]" />
+                    <h2 class="text-red-600 font-bold text-[1.5vw]" id="chance">3</h2>
+                </div>
+                <div
+                    id="progress"
+                    class="w-[70%] bg-[#37464F] h-[1vw] rounded-xl"
+                >
+                    <div
+                        id="doing"
+                        class="w-0 bg-yellow-400 h-full rounded-xl"
+                    ></div>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <img src="../../../assets/img/star.png" width="24" class="w-[1.4vw]" />
+                    <h2 class="text-yellow-400 text-[1.4vw] font-bold">
+                        <span id="level"></span>
+                    </h2>
+                </div>
+            </div>
+
+            <div
+                id="effect"
+                class="hidden absolute top-0 left-0 w-full h-full pointer-events-none"
+            ></div>
+
+            <div
+                class="flex-1 flex flex-col w-full h-svh justify-center items-center gap-10"
+            >
+                <div id="game-elements-container" class="relative">
+                    </div>
+            </div>
+
+            <div class="p-5 h-[7vw] flex justify-center gap-4">
+                <button id="backToMenu" class="text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-[0.15vw] border-b-[0.4vw] h-fit border-gray-600 border-b-gray-600 text-gray-600 duration-150 font-medium hover:bg-[rgba(0,0,0,0.1)]">Back to Menu</button>
+                <button
+                    id="next"
+                    class="hidden text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-b-[0.4vw] bg-[#93D333] h-fit border-b-[#79B933] text-[#131F24] duration-150 font-medium hover:bg-[#93E533]"
+                >Next Level</button> <audio id="success-sound" src="../../../assets/sounds/success.mp3"></audio>
+                <audio id="bad-answer-sound" src="../../../assets/sounds/bad_answer.mp3"></audio>
+            </div>
+        </div>
+
+        <script src="../../../renderer.js"></script>
+        <script src="../../../module/module.js"></script>
+        <script src="../../../module/Effects.js"></script>
+        <script src="../../../module/ExcludingItems.js"></script>
+    </body>
+</html>

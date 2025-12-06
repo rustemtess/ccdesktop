@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Перетаскивание фигур (Pointer Events)</title>
+        <link href="../../../assets/css/main.css" rel="stylesheet" />
+    </head>
+    <body
+        class="bg-cover"
+    >
+        <div class="z-10 flex flex-col h-svh">
+            <div class="w-full flex justify-center items-center p-5 gap-5">
+                <div class="flex items-center gap-2">
+                    <img src="../../../assets/img/heart.png" width="24" class="w-[1.8vw]" />
+                    <h2 class="text-red-600 font-bold text-[1.5vw]" id="chance">3</h2>
+                </div>
+                <div
+                    id="progress"
+                    class="w-[70%] bg-[#37464F] h-[1vw] rounded-xl"
+                >
+                    <div
+                        id="doing"
+                        class="w-0 bg-yellow-400 h-full rounded-xl"
+                    ></div>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <img src="../../../assets/img/star.png" width="24" class="w-[1.4vw]" />
+                    <h2 class="text-yellow-400 text-[1.4vw] font-bold">
+                        8 <span id="level"></span>
+                    </h2>
+                </div>
+            </div>
+
+            <div
+                id="effect"
+                class="hidden absolute top-0 left-0 w-full h-full pointer-events-none"
+            ></div>
+
+            <div
+                class="flex-1 flex flex-col w-full h-svh justify-center items-center gap-10"
+            >
+                <div class="flex justify-center relative" id="main-figure">
+                    <img src="./1.svg" style="width: 28vw" />
+                    <div
+                        class="drop-zone w-[9.2vw] h-[6vw] absolute right-[4vw] bottom-[2.3vw]"
+                        id="drop-zone-1"
+                        data-index="4"
+                    ></div>
+                </div>
+
+                <div class="small-figures-container grid grid-cols-3 gap-5">
+                    <div
+                        style="background-image: url(./6.svg)"
+                        class="draggable draggable-figure w-[11vw] bg-cover h-[6.6vw]"
+                        data-index="0"
+                    ></div>
+                    <div
+                        style="background-image: url(./3.svg)"
+                        class="draggable draggable-figure w-[11vw] bg-cover h-[6.6vw]"
+                        data-index="1"
+                    ></div>
+                    <div
+                        style="background-image: url(./4.svg)"
+                        class="draggable draggable-figure w-[11vw] bg-cover h-[6.6vw]"
+                        data-index="2"
+                    ></div>
+                    <div
+                        style="background-image: url(./5.svg)"
+                        class="draggable draggable-figure w-[11vw] bg-cover h-[6.6vw]"
+                        data-index="3"
+                    ></div>
+                    <div
+                        style="background-image: url(./2.svg)"
+                        class="draggable draggable-figure w-[11vw] bg-cover h-[6.6vw]"
+                        data-index="4"
+                    ></div>
+                    <div
+                        style="background-image: url(./7.svg)"
+                        class="draggable draggable-figure w-[11vw] bg-cover h-[6.6vw]"
+                        data-index="5"
+                    ></div>
+                </div>
+            </div>
+
+            <div class="p-5 h-[7vw] flex justify-center gap-4">
+                <button
+                    id="backToMenu"
+                    onclick="window.location.href = '../../../menu.html'"
+                    class="text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-[0.15vw] border-b-[0.4vw] h-fit border-gray-600 border-b-gray-600 text-gray-600 duration-150 font-medium hover:bg-[rgba(0,0,0,0.1)]"
+                ></button>
+                <button
+                    onclick="window.location.href = '../AB9/index.html'"
+                    id="next"
+                    class="hidden text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-b-[0.4vw] bg-[#93D333] h-fit border-b-[#79B933] text-[#131F24] duration-150 font-medium hover:bg-[#93E533]"
+                ></button>
+                <audio
+                    id="success-sound"
+                    src="../../../assets/sounds/success.mp3"
+                ></audio>
+                <audio
+                    id="bad-answer-sound"
+                    src="../../../assets/sounds/bad_answer.mp3"
+                ></audio>
+            </div>
+        </div>
+
+        <script src="../../../renderer.js"></script>
+        <script src="../../../module/module.js"></script>
+        <script src="../../../module/Effects.js"></script>
+        <script src="../../../module/Draggable.js"></script>
+        <script>
+            document.querySelectorAll(".draggable").forEach((block) => {
+                block.__draggableInstance = new Draggable(
+                    block,
+                    block.dataset.index,
+                    {
+                        name: "AB8",
+                        win: 1,
+                        currentLevel: Number(
+                            localStorage.getItem("progress"),
+                        ),
+                        max: 12,
+                    },
+                    launchConfetti,
+                    true,
+                );
+            });
+        </script>
+    </body>
+</html>

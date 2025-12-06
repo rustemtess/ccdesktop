@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../../assets/css/main.css" rel="stylesheet" />
+    <title>Простые аналогии (Тест на выбор)</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            width: 100%;
+        }
+
+        #analogy-area {
+            width: 95%; 
+            max-width: 800px;
+            background-color: white;
+            border-radius: 8px; 
+            padding: 25px; 
+            font-family: Arial, sans-serif;
+            user-select: none;
+            max-height: 70vh; 
+            overflow-y: auto; 
+            margin-bottom: 20px;
+        }
+
+        #prompt-text {
+            font-size: clamp(20px, 4vw, 28px);
+            font-weight: bold;
+            color: #007bff; 
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        #options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        /* АДАПТИРОВАННЫЙ СТИЛЬ КНОПОК */
+        .custom-button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            
+            font-weight: 600; 
+
+            font-size: clamp(12px, 2.5vw, 18px); 
+            padding: 0.7vw 1.6vw;
+            
+            border-radius: 1.3vw; 
+            border: 0.15vw solid; 
+            border-bottom-width: 0.4vw; 
+            
+            transition: all 0.15s;
+        }
+
+        /* Серый цвет для кнопок "Сбросить/Назад" */
+        .nav-button {
+            border-color: #4b5563; 
+            color: #4b5563; 
+            background-color: #fff;
+        }
+        .nav-button:hover:not(:disabled) {
+             background-color: rgba(0,0,0,0.1);
+        }
+
+        /* Стиль для кнопок-опций */
+        .option-button {
+            flex-grow: 1;
+            min-width: 120px;
+            border-color: #007bff; 
+            color: #007bff;
+            background-color: #f9f9f9;
+        }
+        .option-button:hover {
+            background-color: #e6f2ff;
+        }
+
+
+        /* ---------------------------------------------------------------------- */
+        /* НОВЫЙ КРАСИВЫЙ СТИЛЬ ДЛЯ ОКНА РЕЗУЛЬТАТОВ (ВЗЯТ ИЗ ТЕСТА ШУЛЬТЕ) */
+        /* ---------------------------------------------------------------------- */
+        .results-box {
+            width: 95%; 
+            max-width: 500px;
+            background-color: #fff;
+            padding: 0;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            display: none;
+            margin-bottom: 15px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            animation: slideIn 0.3s ease-out;
+            margin-left: auto; 
+            margin-right: auto; 
+            margin-top: 30px;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .rb-header {
+            background-color: #37464F;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .rb-content {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .rb-item {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+
+        .rb-label {
+            font-size: 0.8rem;
+            color: #666;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .rb-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #333;
+        }
+
+        /* Футер (общий итог) */
+        .rb-footer {
+            grid-column: span 2;
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            color: #2e7d32;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        .rb-total-text {
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            display: block;
+        }
+        .rb-total-val {
+            font-size: 1.4rem; 
+            font-weight: 900;
+        }
+
+        /* Фиксированная нижняя панель */
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center pb-20">
+
+    <div class="w-full flex justify-center items-center p-5 gap-5 text-xl">
+        <div class="flex items-center gap-2">
+            <img src="../../assets/img/correct.png" width="25" />
+            <h2 class="text-green-600 font-bold" id="correct-count">0</h2>
+        </div>
+        <div class="flex items-center gap-2">
+            <img src="../../assets/img/incorrect.png" width="20" />
+            <h2 class="text-red-600 font-bold" id="wrong-count">0</h2>
+        </div>
+        <div class="flex items-center gap-2">
+            <img src="../../assets/img/target.png" width="23" />
+            <h2 class="text-yellow-400 text-[1.4vw] font-bold" id="total-count">0/12</h2>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="analogy-area">
+            <div id="prompt-text"></div>
+            <div id="options-container"></div>
+            <div id="results-display" class="results-box" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="fixed-footer">
+        <button 
+            onclick="resetGame()" 
+            id="reset-button"
+            class="custom-button nav-button">
+            </button>
+        <button 
+            onclick="window.location.href = '../../menu.html'" 
+            id="backToMenu"
+            class="custom-button nav-button">
+            </button>
+    </div>
+
+    <script src="../../renderer.js"></script>
+
+    <script>
+        const locale = localStorage.getItem("locale") || "ru";
+
+        const translations = {
+            ru: {
+                title: "Простые аналогии (Тест на выбор)",
+                endGameText: "Тест завершен!",
+                results: "📊 Результаты теста",
+                total: "Всего заданий",
+                correct: "Правильных ответов",
+                wrong: "Ошибок",
+                analogies: [
+                    { id: 1, prompt: "Ложка - Вилка :: Каша - ?", options: ["Масло", "Нож", "Тарелка", "Мясо", "Посуда"], answer: "Мясо" },
+                    { id: 2, prompt: "Школа - Обучение :: Больница - ?", options: ["Доктор", "Ученик", "Учреждение", "Лечение", "Больной"], answer: "Лечение" },
+                    { id: 3, prompt: "Лошадь - Жеребенок :: Корова - ?", options: ["Пастбище", "Рога", "Молоко", "Теленок", "Бык"], answer: "Теленок" },
+                    { id: 4, prompt: "Ухо - Слышать :: Зубы - ?", options: ["Видеть", "Лечить", "Рот", "Щетка", "Жевать"], answer: "Жевать" },
+                    { id: 5, prompt: "Собака - Шерсть :: Щука - ?", options: ["Овца", "Ловкость", "Рыба", "Удочки", "Чешуя"], answer: "Чешуя" },
+                    { id: 6, prompt: "Чай - Сахар :: Суп - ?", options: ["Вода", "Тарелка", "Крупа", "Соль", "Ложка"], answer: "Соль" },
+                    { id: 7, prompt: "Дерево - Сук :: Рука - ?", options: ["Топор", "Перчатка", "Нога", "Работа", "Палец"], answer: "Палец" },
+                    { id: 8, prompt: "Коньки - Лед :: Лодка - ?", options: ["Зима", "Каток", "Весло", "Река", "Лето"], answer: "Река" }, 
+                    { id: 9, prompt: "Свинец - Тяжелый :: Пух - ?", options: ["Трудный", "Перина", "Перья", "Легкий", "Куриный"], answer: "Легкий" },
+                    { id: 10, prompt: "Толстый - Тонкий :: Безобразный - ?", options: ["Красивый", "Жирный", "Грязный", "Урод", "Веселый"], answer: "Красивый" },
+                    { id: 11, prompt: "Яйцо - Скорлупа :: Картофель - ?", options: ["Курица", "Огород", "Капуста", "Суп", "Шелуха"], answer: "Шелуха" },
+                    { id: 12, prompt: "Нож - Сталь :: Стол - ?", options: ["Вилка", "Дерево", "Стул", "Пища", "Скатерть"], answer: "Дерево" }
+                ]
+            },
+            en: {
+                title: "Simple Analogies (Selection Test)",
+                endGameText: "Test finished!",
+                results: "📊 Test Results",
+                total: "Total tasks",
+                correct: "Correct answers",
+                wrong: "Mistakes",
+                analogies: [
+                    { id: 1, prompt: "Spoon - Fork :: Porridge - ?", options: ["Butter", "Knife", "Plate", "Meat", "Dishes"], answer: "Meat" },
+                    { id: 2, prompt: "School - Learning :: Hospital - ?", options: ["Doctor", "Student", "Institution", "Treatment", "Patient"], answer: "Treatment" },
+                    { id: 3, prompt: "Horse - Foal :: Cow - ?", options: ["Pasture", "Horns", "Milk", "Calf", "Bull"], answer: "Calf" },
+                    { id: 4, prompt: "Ear - Hear :: Teeth - ?", options: ["See", "Treat", "Mouth", "Brush", "Chew"], answer: "Chew" },
+                    { id: 5, prompt: "Dog - Wool :: Pike - ?", options: ["Sheep", "Dexterity", "Fish", "Rods", "Scales"], answer: "Scales" },
+                    { id: 6, prompt: "Tea - Sugar :: Soup - ?", options: ["Water", "Plate", "Cereals", "Salt", "Spoon"], answer: "Salt" },
+                    { id: 7, prompt: "Tree - Branch :: Hand - ?", options: ["Axe", "Glove", "Leg", "Work", "Finger"], answer: "Finger" },
+                    { id: 8, prompt: "Skates - Ice :: Boat - ?", options: ["Winter", "Rink", "Oar", "River", "Summer"], answer: "River" }, 
+                    { id: 9, prompt: "Lead - Heavy :: Fluff - ?", options: ["Difficult", "Featherbed", "Feathers", "Light", "Chicken"], answer: "Light" },
+                    { id: 10, prompt: "Thick - Thin :: Ugly - ?", options: ["Beautiful", "Fat", "Dirty", "Freak", "Cheerful"], answer: "Beautiful" },
+                    { id: 11, prompt: "Egg - Shell :: Potato - ?", options: ["Chicken", "Garden", "Cabbage", "Soup", "Peel"], answer: "Peel" },
+                    { id: 12, prompt: "Knife - Steel :: Table - ?", options: ["Fork", "Wood", "Chair", "Food", "Tablecloth"], answer: "Wood" }
+                ]
+            },
+            kz: {
+                title: "Қарапайым аналогиялар (Таңдау тесті)",
+                endGameText: "Тест аяқталды!",
+                results: "📊 Нәтижелер",
+                total: "Барлық тапсырмалар",
+                correct: "Дұрыс жауаптар",
+                wrong: "Қателер",
+                analogies: [
+                    { id: 1, prompt: "Қасық - Шанышқы :: Боза - ?", options: ["Май", "Пышақ", "Тәрелке", "Ет", "Ыдыс"], answer: "Ет" },
+                    { id: 2, prompt: "Мектеп - Оқыту :: Аурухана - ?", options: ["Дәрігер", "Оқушы", "Мекеме", "Емдеу", "Науқас"], answer: "Емдеу" },
+                    { id: 3, prompt: "Жылқы - Құлын :: Сиыр - ?", options: ["Жайылым", "Мүйіз", "Сүт", "Бұзау", "Бұқа"], answer: "Бұзау" },
+                    { id: 4, prompt: "Құлақ - Есту :: Тістер - ?", options: ["Көру", "Емдеу", "Ауыз", "Щетка", "Шайнау"], answer: "Шайнау" },
+                    { id: 5, prompt: "Ит - Жүн :: Шортан - ?", options: ["Қой", "Ептілік", "Балық", "Қармақ", "Қабыршақ"], answer: "Қабыршақ" },
+                    { id: 6, prompt: "Шай - Қант :: Сорпа - ?", options: ["Су", "Тәрелке", "Жарма", "Тұз", "Қасық"], answer: "Тұз" },
+                    { id: 7, prompt: "Ағаш - Бұтақ :: Қол - ?", options: ["Балта", "Қолғап", "Аяқ", "Жұмыс", "Саусақ"], answer: "Саусақ" },
+                    { id: 8, prompt: "Коньки - Мұз :: Қайық - ?", options: ["Қыс", "Сырғанақ", "Ескек", "Өзен", "Жаз"], answer: "Өзен" }, 
+                    { id: 9, prompt: "Қорғасын - Ауыр :: Мамық - ?", options: ["Қиын", "Жүн", "Қауырсын", "Жеңіл", "Тауық"], answer: "Жеңіл" },
+                    { id: 10, prompt: "Жуан - Жіңішке :: Ұсқынсыз - ?", options: ["Әдемі", "Семіз", "Лас", "Адам", "Көңілді"], answer: "Әдемі" },
+                    { id: 11, prompt: "Жұмыртқа - Қабық :: Картоп - ?", options: ["Тауық", "Бақша", "Қырыққабат", "Сорпа", "Қабық"], answer: "Қабық" },
+                    { id: 12, prompt: "Пышақ - Болат :: Үстел - ?", options: ["Шанышқы", "Ағаш", "Орындық", "Тағам", "Дастархан"], answer: "Ағаш" }
+                ]
+            }
+        };
+
+        const t = translations[locale] || translations.ru;
+        const simpleAnalogiesData = t.analogies; 
+        
+        // Установка заголовка
+        document.title = t.title;
+
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        const totalQuestions = simpleAnalogiesData.length;
+
+        const promptTextEl = document.getElementById('prompt-text');
+        const optionsContainerEl = document.getElementById('options-container');
+        const correctCountEl = document.getElementById('correct-count');
+        const wrongCountEl = document.getElementById('wrong-count');
+        const totalCountEl = document.getElementById('total-count');
+        const resultsDisplayEl = document.getElementById('results-display');
+        
+        function loadQuestion(index) {
+            if (index >= totalQuestions) {
+                endGame();
+                return;
+            }
+
+            const currentItem = simpleAnalogiesData[index];
+            promptTextEl.textContent = `${currentItem.id}. ${currentItem.prompt}`;
+            optionsContainerEl.innerHTML = '';
+            
+            resultsDisplayEl.style.display = 'none';
+            totalCountEl.textContent = `${index + 1}/${totalQuestions}`;
+
+
+            currentItem.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'custom-button option-button'; 
+                button.textContent = option;
+                button.dataset.answer = option;
+                button.onclick = () => handleAnswer(option, currentItem.answer);
+                optionsContainerEl.appendChild(button);
+            });
+        }
+
+        function handleAnswer(selected, correct) {
+            if (selected === correct) {
+                correctCount++;
+            } else {
+                wrongCount++;
+            }
+
+            correctCountEl.textContent = correctCount;
+            wrongCountEl.textContent = wrongCount;
+
+            currentQuestionIndex++;
+            loadQuestion(currentQuestionIndex);
+        }
+
+        function endGame() {
+            promptTextEl.textContent = t.endGameText;
+            optionsContainerEl.innerHTML = '';
+            
+            resultsDisplayEl.style.display = 'block';
+            
+            // НОВЫЙ ФОРМАТ HTML
+            const html = `
+                <div class="rb-header">${t.results}</div>
+                <div class="rb-content">
+                    <div class="rb-item">
+                        <span class="rb-label">${t.correct}</span>
+                        <span class="rb-value" style="color:#2e7d32;">${correctCount}</span>
+                    </div>
+                    <div class="rb-item">
+                        <span class="rb-label">${t.wrong}</span>
+                        <span class="rb-value" style="color:#d84315;">${wrongCount}</span>
+                    </div>
+                    <div class="rb-footer">
+                        <span class="rb-total-text">${t.total}</span>
+                        <span class="rb-total-val">${totalQuestions}</span>
+                    </div>
+                </div>
+            `;
+            
+            resultsDisplayEl.innerHTML = html;
+            totalCountEl.textContent = `${totalQuestions}/${totalQuestions}`;
+        }
+
+        function resetGame() {
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            wrongCount = 0;
+
+            correctCountEl.textContent = '0';
+            wrongCountEl.textContent = '0';
+            totalCountEl.textContent = `0/${totalQuestions}`;
+            resultsDisplayEl.style.display = 'none';
+            
+            loadQuestion(currentQuestionIndex);
+        }
+
+        document.getElementById('reset-button').textContent = locale === 'ru' ? 'Начать заново' : locale === 'kz' ? 'Қайта бастау' : 'Restart';
+        document.getElementById('backToMenu').textContent = locale === 'ru' ? 'В меню' : locale === 'kz' ? 'Мәзірге' : 'To Menu';
+
+        window.onload = resetGame;
+    </script>
+</body>
+</html>

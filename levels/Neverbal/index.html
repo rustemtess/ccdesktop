@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="../../assets/css/main.css" rel="stylesheet" />
+<title>Интерактивная картинка</title>
+<style>
+
+  .image-container {
+    position: relative;
+    width: 90vw;
+    max-width: 900px;
+    aspect-ratio: 1918 / 498;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    background: white;
+    border-radius: 10px;
+  }
+
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .zone {
+    position: absolute;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.25s ease;
+  }
+
+  .zone:hover {
+    border-color: rgba(0, 0, 255, 0.25);
+    background-color: rgba(0, 0, 255, 0.05);
+  }
+
+  .active {
+    border-color: blue !important;
+    background-color: rgba(0, 0, 255, 0.15);
+  }
+
+  .correct {
+    border-color: #1bc41b !important;
+    background-color: rgba(27, 196, 27, 0.2);
+    animation: correctFlash 0.4s ease-in-out;
+  }
+
+  .wrong {
+    border-color: #ff3b3b !important;
+    background-color: rgba(255, 59, 59, 0.2);
+    animation: wrongShake 0.4s ease-in-out;
+  }
+
+  @keyframes correctFlash {
+    from { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    to { transform: scale(1); }
+  }
+
+  @keyframes wrongShake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+  }
+
+  .disabled {
+    pointer-events: none;
+    opacity: 0.4;
+  }
+
+</style>
+</head>
+<body class="flex flex-col justify-between items-center">
+
+  <!-- Верхняя панель -->
+  <div class="w-full flex justify-center items-center p-5 gap-5">
+                <div class="flex items-center gap-2">
+                    <img src="../../assets/img/heart.png" width="24" class="w-[1.8vw]" />
+                    <h2 class="text-red-600 font-bold text-[1.5vw]" id="chance">3</h2>
+                </div>
+                <div
+                    id="progress"
+                    class="w-[70%] bg-[#37464F] h-[1vw] rounded-xl"
+                >
+                    <div
+                        id="doing"
+                        class="w-0 bg-yellow-400 h-full rounded-xl"
+                    ></div>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <img src="../../assets/img/star.png" width="24" class="w-[1.4vw]" />
+                    <h2 class="text-yellow-400 text-[1.4vw] font-bold">
+                        1 <span id="level"></span>
+                    </h2>
+                </div>
+            </div>
+
+  <!-- Основная картинка -->
+  <div class="image-container">
+    <img src="./assets/1.png" alt="Animals" />
+
+    <!-- Верхний блок -->
+    <div class="zone" id="top" style="top: 0; left: 0; width: 100%; height: 53%;"></div>
+
+    <!-- Нижние 4 блока -->
+    <div class="zone disabled" id="b1" style="top: 50%; left: 0; width: 25%; height: 50%;"></div>
+    <div class="zone" id="b2" style="top: 52%; left: 25%; width: 25%; height: 47%;"></div>
+    <div class="zone" id="b3" style="top: 52%; left: 50%; width: 25%; height: 47%;"></div>
+    <div class="zone" id="b4" style="top: 52%; left: 75%; width: 25%; height: 47%;"></div>
+  </div>
+
+  <div class="p-5 h-[7vw] flex justify-center gap-4">
+       <button onclick="window.location.href = '../../menu.html'" id="backToMenu" class="text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-[0.15vw] border-b-[0.4vw] h-fit border-gray-600 border-b-gray-600 text-gray-600 duration-150 font-medium hover:bg-[rgba(0,0,0,0.1)]"></button>
+    </div>
+
+  <div id="effect" class="hidden absolute top-0 left-0 w-full h-full pointer-events-none"></div>
+
+  <!-- Звуки -->
+  <audio id="sound-correct" src="../../assets/sounds/success.mp3" preload="auto"></audio>
+  <audio id="sound-wrong" src="../../assets/sounds/bad_answer.mp3" preload="auto"></audio>
+
+  <script src="../../module/Effects.js"></script>
+  <script src="../../module/GameScore.js"></script>
+  <script src="../../renderer.js"></script>
+
+  <!-- Скрипт -->
+  <script>
+
+    const game = new GameScore({
+      levelName: "A1",
+      onWin: () => {
+        launchConfetti("effect");
+        console.log("✅ Победа! Очки:", localStorage.getItem("result"));
+      },
+      onLose: () => {
+        alert("❌ У тебя закончились шансы!");
+        location.reload();
+      },
+    });
+
+    let topSelected = false;
+    const topZone = document.getElementById("top");
+    const bottomZones = document.querySelectorAll("#b2, #b3, #b4");
+
+    topZone.addEventListener("click", () => {
+      topSelected = true;
+      topZone.classList.toggle("active");
+    });
+
+    bottomZones.forEach(zone => {
+      zone.addEventListener("click", () => {
+        if (!topSelected) {
+          alert("Сначала выбери верхний блок!");
+          return;
+        }
+
+        bottomZones.forEach(z => z.classList.remove("active", "correct", "wrong"));
+        zone.classList.add("active");
+
+        if (zone.id === "b4") {
+          zone.classList.add("correct");
+          game.correctAnswer();
+          setTimeout(()=>{
+            document.location.href = 'index2.html'
+          }, 1000)
+        } else {
+          zone.classList.add("wrong");
+          game.wrongAnswer();
+        }
+
+        setTimeout(() => {
+          topZone.classList.remove("active");
+          bottomZones.forEach(z => z.classList.remove("active", "correct", "wrong"));
+          topSelected = false;
+        }, 1000);
+      });
+    });
+  </script>
+</body>
+</html>

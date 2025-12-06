@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Hello from Electron renderer!</title>
+        <link href="./assets/css/main.css" rel="stylesheet" />
+        <style>
+            .rotate-180 {
+                transform: rotate(180deg);
+            }
+        </style>
+    </head>
+    <body class="bg-cover flex flex-col items-center overflow-y-auto">
+        
+        <div class="z-10 w-full flex justify-between items-center gap-5 px-5 pt-4">
+            <button
+                onclick="window.location.href = 'instruction.html'"
+                class="text-[1.2vw] flex items-center gap-2 bg-[#49C0F8] h-fit border-b-[0.4vw] border-b-[#1899D6] px-[1.6vw] py-[0.9vw] rounded-[1.3vw] text-[#131F24] duration-150 font-medium hover:bg-[#49C5F8]"
+            >
+                <img src="./assets/img/manual.png" width="22" />
+                <p id="instructions" class="instructions"></p> </button>
+            <nav class="flex gap-5">
+                <button id="localeKz">
+                    <img src="./assets/img/flag_kz.png" width="50" class="w-[4.5vw]" />
+                </button>
+                <button id="localeRu">
+                    <img src="./assets/img/flag_ru.png" width="50" class="w-[4.5vw]" />
+                </button>
+                <button id="localeEn">
+                    <img src="./assets/img/flag_us.png" width="50" class="w-[4.5vw]" />
+                </button>
+            </nav>
+        </div>
+
+
+            <div class="z-10 w-[95%] max-w-[900px] mt-12 flex flex-col gap-4 pb-10">
+
+            <div class="w-full">
+                <button onclick="toggleGroup('raven_group', this)" class="w-full flex justify-between items-center text-[1.8vw] h-fit border-[0.2vw] border-b-[0.5vw] border-[#ff9800] px-[1.8vw] py-[1.5vw] rounded-[2vw] text-[#131F24] duration-150 font-medium bg-white hover:bg-orange-50">
+                    <div class="flex items-center gap-3 text-left">
+                        <span class="text-[#ff9800] text-[2vw]">📁</span>
+                        <p class="first_game"></p> 
+                    </div>
+                    <svg class="w-[2vw] h-[2vw] transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                
+                <div id="raven_group" class="hidden flex-col gap-3 mt-3 pl-[2vw] border-l-[0.4vw] border-[#ff9800]/30 ml-[1.5vw]">
+                    <button class="flex items-center gap-2 cursor-pointer text-[1.5vw] h-fit border-[0.2vw] border-b-[0.4vw] border-[#ff9800] px-[1.5vw] py-[1vw] rounded-[1.5vw] text-[#131F24] bg-white hover:bg-[#ff9700]" onclick="window.location.href = './levels/ColorMatrices/A1/index.html'">
+                        <p>A - </p>
+                        <p class="first_game"></p>
+                    </button>
+                    <button class="flex items-center gap-2 cursor-pointer text-[1.5vw] h-fit border-[0.2vw] border-b-[0.4vw] border-[#ff9800] px-[1.5vw] py-[1vw] rounded-[1.5vw] text-[#131F24] bg-white hover:bg-[#ff9700]" onclick="window.location.href = './levels/ColorMatrices/AB1/index.html'">
+                        <p>AB - </p>
+                        <p class="first_game"></p>
+                    </button>
+                    <button class="flex items-center gap-2 cursor-pointer text-[1.5vw] h-fit border-[0.2vw] border-b-[0.4vw] border-[#ff9800] px-[1.5vw] py-[1vw] rounded-[1.5vw] text-[#131F24] bg-white hover:bg-[#ff9700]" onclick="window.location.href = './levels/ColorMatrices/B1/index.html'">
+                        <p>B - </p>
+                        <p class="first_game"></p>
+                    </button>
+                </div>
+            </div>
+
+            <div class="w-full">
+                <button onclick="toggleGroup('exclude_group', this)" class="w-full flex justify-between items-center text-[1.8vw] h-fit border-[0.2vw] border-b-[0.5vw] border-emerald-600 px-[1.8vw] py-[1.5vw] rounded-[2vw] text-[#131F24] duration-150 font-medium bg-white hover:bg-emerald-50">
+                     <div class="flex items-center gap-3 text-left">
+                        <span class="text-emerald-600 text-[2vw]">📁</span>
+                        <p class="second_game"></p> 
+                    </div>
+                    <svg class="w-[2vw] h-[2vw] transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+
+                <div id="exclude_group" class="hidden flex-col gap-3 mt-3 pl-[2vw] border-l-[0.4vw] border-emerald-600/30 ml-[1.5vw]">
+                    <button class="flex items-center gap-2 cursor-pointer text-[1.5vw] h-fit border-[0.2vw] border-b-[0.4vw] border-emerald-600 px-[1.5vw] py-[1vw] rounded-[1.5vw] text-[#131F24] bg-white hover:bg-emerald-600" onclick="window.location.href = './levels/ExcludingItems/A1/index.html'">
+                        <p>A - </p>
+                        <p class="second_game"></p>
+                    </button>
+                    <button class="flex items-center gap-2 cursor-pointer text-[1.5vw] h-fit border-[0.2vw] border-b-[0.4vw] border-emerald-600 px-[1.5vw] py-[1vw] rounded-[1.5vw] text-[#131F24] bg-white hover:bg-emerald-600" onclick="window.location.href = './levels/ExcludingImg/A1/index.html'">
+                        <p>AB - </p>
+                        <p class="third_game"></p>
+                    </button>
+                    <button class="flex items-center gap-2 cursor-pointer text-[1.5vw] h-fit border-[0.2vw] border-b-[0.4vw] border-emerald-600 px-[1.5vw] py-[1vw] rounded-[1.5vw] text-[#131F24] bg-white hover:bg-emerald-600" onclick="window.location.href = './levels/ExcludingImg/A2/index.html'">
+                        <p>B - </p>
+                        <p class="third_game"></p>
+                    </button>
+                </div>
+            </div>
+
+            <div class="w-full">
+                <button onclick="toggleGroup('analog_group', this)" class="w-full flex justify-between items-center text-[1.8vw] h-fit border-[0.2vw] border-b-[0.5vw] border-teal-600 px-[1.8vw] py-[1.5vw] rounded-[2vw] text-[#131F24] duration-150 font-medium bg-white hover:bg-teal-50">
+                     <div class="flex items-center gap-3 text-left">
+                        <span class="text-teal-600 text-[2vw]">📁</span>
+                        <p class="parnye_analog"></p>
+                    </div>
+                    <svg class="w-[2vw] h-[2vw] transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+
+                <div id="analog_group" class="hidden flex-col gap-3 mt-3 pl-[2vw] border-l-[0.4vw] border-teal-600/30 ml-[1.5vw]">
+                    <button class="flex items-center gap-2 cursor-pointer text-[1.5vw] h-fit border-[0.2vw] border-b-[0.4vw] border-teal-600 px-[1.5vw] py-[1vw] rounded-[1.5vw] text-[#131F24] bg-white hover:bg-teal-600" onclick="window.location.href = './levels/PairAnalog/index.html'">
+                        <p class="parnye_analog"></p>
+                    </button>
+                    <button class="flex items-center gap-2 cursor-pointer text-[1.5vw] h-fit border-[0.2vw] border-b-[0.4vw] border-teal-600 px-[1.5vw] py-[1vw] rounded-[1.5vw] text-[#131F24] bg-white hover:bg-teal-600" onclick="window.location.href = './levels/SimpleAnalog/index.html'">
+                        <p class="simple_analog"></p>
+                    </button>
+                </div>
+            </div>
+
+            <button class="flex items-center gap-2 cursor-pointer text-[1.8vw] h-fit border-[0.2vw] border-b-[0.5vw] border-sky-600 px-[1.8vw] py-[1.5vw] rounded-[2vw] text-[#131F24] duration-150 font-medium hover:bg-sky-600 bg-white" onclick="window.location.href = './levels/Neverbal/index.html'">
+                <p class="neverbal"></p>
+            </button>
+            
+            <button class="flex items-center gap-2 cursor-pointer text-[1.8vw] h-fit border-[0.2vw] border-b-[0.5vw] border-rose-600 px-[1.8vw] py-[1.5vw] rounded-[2vw] text-[#131F24] duration-150 font-medium hover:bg-rose-600 bg-white" onclick="window.location.href = './levels/Schulte/index.html'">
+                <p class="test_schulte"></p>
+            </button>
+            
+            <button class="flex items-center gap-2 cursor-pointer text-[1.8vw] h-fit border-[0.2vw] border-b-[0.5vw] border-violet-600 px-[1.8vw] py-[1.5vw] rounded-[2vw] text-[#131F24] duration-150 font-medium hover:bg-violet-600 bg-white" onclick="window.location.href = './levels/Korrektura/index.html'">
+                <p class="korrektura"></p>
+            </button>
+           
+        </div>
+
+        <script>
+            // Логика инициализации
+            localStorage.setItem("progress", "0");
+            localStorage.setItem("point", "1");
+            localStorage.setItem("result", "0");
+            localStorage.setItem("answers", JSON.stringify({}))
+
+            // Функция для открытия/закрытия папок
+            function toggleGroup(groupId, button) {
+                const list = document.getElementById(groupId);
+                const arrow = button.querySelector('svg');
+                
+                if (list.classList.contains('hidden')) {
+                    // Открыть
+                    list.classList.remove('hidden');
+                    list.classList.add('flex');
+                    arrow.classList.add('rotate-180');
+                } else {
+                    // Закрыть
+                    list.classList.add('hidden');
+                    list.classList.remove('flex');
+                    arrow.classList.remove('rotate-180');
+                }
+            }
+        </script>
+        <script src="./renderer.js"></script>
+    </body>
+</html>

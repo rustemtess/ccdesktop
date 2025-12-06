@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../../assets/css/main.css" rel="stylesheet" />
+    <title>Тест Шульте: Скорость и Внимание</title>
+<style>
+    /* ---------------------------------------------------------------------- */
+    /* ОБЩИЕ СТИЛИ КОНТЕЙНЕРА (ВОССТАНОВЛЕНЫ) */
+    /* ---------------------------------------------------------------------- */
+    .schulte-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5px; 
+        width: 100%;
+        padding-top: 10px; 
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* ТАБЛИЦА ШУЛЬТЕ (ВОССТАНОВЛЕНЫ) */
+    /* ---------------------------------------------------------------------- */
+    #schulte-table {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        width: 95%; 
+        max-width: 500px;
+        aspect-ratio: 1 / 1;
+        border: 2px solid #ccc;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: white;
+        border-radius: 8px;
+        margin-bottom: 5px;
+    }
+
+    .schulte-cell {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2vw; 
+        font-weight: bold;
+        border: 1px solid #eee;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent; 
+    }
+    
+    @media (min-width: 768px) {
+        .schulte-cell {
+            font-size: 1.5vw; 
+        }
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* НОВЫЙ КРАСИВЫЙ СТИЛЬ ДЛЯ ОКНА РЕЗУЛЬТАТОВ (ОСТАВЛЕН) */
+    /* ---------------------------------------------------------------------- */
+    .results-box {
+        width: 95%; 
+        max-width: 500px;
+        background-color: #fff;
+        padding: 0;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        display: none;
+        margin-bottom: 15px;
+        overflow: hidden;
+        border: 1px solid #e0e0e0;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .rb-header {
+        background-color: #37464F;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .rb-content {
+        padding: 15px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .rb-item {
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #eee;
+    }
+
+    .rb-label {
+        font-size: 0.8rem;
+        color: #666;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .rb-value {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #333;
+    }
+
+    .rb-footer {
+        grid-column: span 2;
+        background-color: #fff8e1;
+        border: 1px solid #ffecb3;
+        color: #d84315;
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .rb-footer.success {
+        background-color: #e8f5e9;
+        border: 1px solid #c8e6c9;
+        color: #2e7d32;
+    }
+
+    .rb-total-text {
+        font-size: 0.9rem; 
+        font-weight: 600; 
+        display: block;
+    }
+    .rb-total-val {
+        font-size: 1.4rem; 
+        font-weight: 900;
+    }
+
+
+    .schulte-cell:hover:not(.found):not(.disabled) {
+        background-color: #f0f0f0;
+    }
+    .found {
+        background-color: #4CAF50;
+        color: white;
+        pointer-events: none;
+        transition: none;
+    }
+    .disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+    .initial-target {
+        border: 2px solid #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+    .wrong {
+        background-color: #ff3b3b;
+        color: white;
+        animation: wrongShake 0.4s ease-in-out;
+    }
+    @keyframes wrongShake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        50% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+        100% { transform: translateX(0); }
+    }
+</style>
+</head>
+<body class="flex flex-col justify-between items-center">
+
+    <div class="w-full flex justify-center items-center p-5 gap-5">
+        <div class="flex items-center gap-2">
+            <img src="../../assets/img/timer.png" width="25" />
+            <h2 class="text-red-600 font-bold text-[1.5vw]" id="time-left">02:00</h2>
+        </div>
+        <div id="progress" class="w-[70%] bg-[#37464F] h-[1vw] rounded-xl">
+            <div id="doing" class="w-0 bg-yellow-400 h-full rounded-xl"></div>
+        </div>
+        <div class="flex gap-2 items-center">
+            <img src="../../assets/img/target.png" width="23" />
+            <h2 class="text-yellow-400 text-[1.4vw] font-bold">
+                <span id="current-target">0</span> / 25
+            </h2>
+        </div>
+    </div>
+
+    <div class="schulte-container">
+        
+        <div id="results-box" class="results-box">
+        </div>
+        
+        <div id="schulte-table">
+        </div>
+    </div>
+
+    <div class="p-5 h-[7vw] flex justify-center gap-4">
+       <button 
+           onclick="resetGame(true)" 
+           id="reset-button"
+           class="text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-[0.15vw] border-b-[0.4vw] h-fit border-gray-600 border-b-gray-600 text-gray-600 duration-150 font-medium hover:bg-[rgba(0,0,0,0.1)]">
+           Сбросить
+       </button>
+       <button 
+            id="backToMenu"
+           onclick="window.location.href = '../../menu.html'" 
+           class="text-[1.2vw] px-[1.6vw] py-[0.7vw] rounded-[1.3vw] border-[0.15vw] border-b-[0.4vw] h-fit border-gray-600 border-b-gray-600 text-gray-600 duration-150 font-medium hover:bg-[rgba(0,0,0,0.1)]">
+           Меню
+       </button>
+    </div>
+
+    <div id="effect" class="hidden absolute top-0 left-0 w-full h-full pointer-events-none"></div>
+
+    <script src="../../renderer.js"></script>
+    <audio id="sound-correct" src="../../assets/sounds/success.mp3" preload="auto"></audio>
+    <audio id="sound-wrong" src="../../assets/sounds/bad_answer.mp3" preload="auto"></audio>
+
+    <script src="../../module/Effects.js"></script>
+<script>
+    // --- ПЕРЕВОДЫ И ЛОКАЛИЗАЦИЯ (БЕЗ ИЗМЕНЕНИЙ) ---
+    const locale = localStorage.getItem("locale") || "ru";
+
+    const translations = {
+        // ... (Объект translations остался без изменений)
+        ru: {
+            title: "📊 Результаты",
+            sec15: "За 15 сек",
+            sec30: "За 30 сек",
+            success: "Таблица пройдена!",
+            timeout: "Время вышло",
+            sec: "сек",
+            count: "шт"
+        },
+        en: {
+            title: "📊 Results",
+            sec15: "In 15s",
+            sec30: "In 30s",
+            success: "Table Clear!",
+            timeout: "Time's up",
+            sec: "s",
+            count: ""
+        },
+        kz: {
+            title: "📊 Нәтижелер",
+            sec15: "15 секундта",
+            sec30: "30 секундта",
+            success: "Кесте аяқталды!",
+            timeout: "Уақыт бітті",
+            sec: "сек",
+            count: "сан"
+        }
+    };
+
+    const t = translations[locale] || translations.ru;
+
+
+    // --- ОСНОВНОЙ КОД ---
+    const TOTAL_TIME = 120;
+    const TABLE_SIZE = 25;
+    
+    let currentNumber = 1;
+    let gameActive = false;
+    let timeLeft = TOTAL_TIME;
+    let timerInterval = null;
+    let startTime = null;
+    
+    let stats = {
+        found_15s: 0,
+        found_30s: 0,
+        found_total: 0,
+        time_to_25: null
+    };
+
+    const tableContainer = document.getElementById('schulte-table');
+    const timeLeftEl = document.getElementById('time-left');
+    const currentTargetEl = document.getElementById('current-target');
+    const doingEl = document.getElementById('doing');
+    const resultsBox = document.getElementById('results-box');
+    const audioCorrect = document.getElementById('sound-correct');
+    const audioWrong = document.getElementById('sound-wrong');
+
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function generateTable() {
+        tableContainer.innerHTML = '';
+        let numbers = Array.from({ length: TABLE_SIZE }, (_, i) => i + 1);
+        numbers = shuffle(numbers);
+
+        numbers.forEach(number => {
+            const cell = document.createElement('div');
+            cell.className = 'schulte-cell'; 
+            cell.textContent = number;
+            cell.dataset.number = number;
+            cell.addEventListener('click', handleCellClick);
+            tableContainer.appendChild(cell);
+        });
+        highlightInitialTarget();
+    }
+
+    function highlightInitialTarget() {
+        document.querySelectorAll('.schulte-cell').forEach(cell => {
+            cell.classList.remove('initial-target');
+        });
+        const firstCell = document.querySelector(`.schulte-cell[data-number="1"]`);
+        if (firstCell) {
+            firstCell.classList.add('initial-target');
+        }
+    }
+    
+    function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = seconds % 60;
+        return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    function updateProgress() {
+        const progress = Math.min((currentNumber - 1) / TABLE_SIZE * 100, 100);
+        doingEl.style.width = `${progress}%`;
+        currentTargetEl.textContent = currentNumber > TABLE_SIZE ? TABLE_SIZE : currentNumber;
+    }
+    
+    function startTimer() {
+        if (gameActive) return;
+
+        gameActive = true;
+        startTime = Date.now();
+        
+        const firstCell = document.querySelector(`.schulte-cell[data-number="1"]`);
+        if (firstCell) {
+            firstCell.classList.remove('initial-target');
+        }
+
+        timerInterval = setInterval(() => {
+            const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+            timeLeft = TOTAL_TIME - elapsedSeconds;
+            
+            if (elapsedSeconds === 15 && stats.found_15s === 0) {
+                stats.found_15s = currentNumber - 1;
+            }
+            if (elapsedSeconds === 30 && stats.found_30s === 0) {
+                stats.found_30s = currentNumber - 1;
+            }
+            
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                clearInterval(timerInterval);
+                endGame(false);
+            }
+            
+            timeLeftEl.textContent = formatTime(timeLeft);
+        }, 1000);
+    }
+
+    function handleCellClick(event) {
+        const clickedNumber = parseInt(event.target.dataset.number);
+        const cell = event.target;
+        
+        if (clickedNumber === 1 && !gameActive) {
+            startTimer();
+        }
+
+        if (!gameActive) return;
+
+        if (clickedNumber === currentNumber) {
+            cell.classList.add('found');
+            currentNumber++;
+            updateProgress();
+            stats.found_total = currentNumber - 1;
+
+            if (audioCorrect) {
+               audioCorrect.currentTime = 0;
+               audioCorrect.play().catch(() => {});
+            }
+
+            if (currentNumber > TABLE_SIZE) {
+                clearInterval(timerInterval);
+                const totalTime = (Date.now() - startTime) / 1000;
+                stats.time_to_25 = totalTime;
+                endGame(true);
+            }
+        } else {
+            cell.classList.add('wrong');
+            if (audioWrong) {
+                audioWrong.currentTime = 0;
+                audioWrong.play().catch(() => {});
+            }
+            setTimeout(() => cell.classList.remove('wrong'), 400);
+        }
+    }
+    
+    function endGame(fullFound) {
+        gameActive = false;
+        clearInterval(timerInterval);
+        
+        document.querySelectorAll('.schulte-cell').forEach(cell => {
+            cell.classList.add('disabled');
+        });
+
+        displayResults(fullFound);
+    }
+
+    // --- ФУНКЦИЯ ОТОБРАЖЕНИЯ РЕЗУЛЬТАТОВ (СКРЫВАЕТ ТАБЛИЦУ) ---
+    function displayResults(fullFound) {
+        stats.found_total = currentNumber - 1; 
+
+        if (stats.found_15s === 0) stats.found_15s = Math.min(stats.found_total, 15);
+        if (stats.found_30s === 0) stats.found_30s = Math.min(stats.found_total, 30);
+        
+        let footerClass = 'rb-footer';
+        let footerText = '';
+        let footerValue = '';
+
+        if (fullFound && stats.time_to_25) {
+            footerClass += ' success';
+            footerText = `🎉 ${t.success}`;
+            footerValue = `${stats.time_to_25.toFixed(2)} ${t.sec}`;
+        } else {
+            footerText = `${t.timeout}`;
+            footerValue = `${stats.found_total} / 25`;
+        }
+
+        // Генерируем красивый HTML
+        const html = `
+            <div class="rb-header">${t.title}</div>
+            <div class="rb-content">
+                <div class="rb-item">
+                    <span class="rb-label">${t.sec15}</span>
+                    <span class="rb-value">${stats.found_15s} <small style="font-size:0.7em; font-weight:normal;">${t.count}</small></span>
+                </div>
+                <div class="rb-item">
+                    <span class="rb-label">${t.sec30}</span>
+                    <span class="rb-value">${stats.found_30s} <small style="font-size:0.7em; font-weight:normal;">${t.count}</small></span>
+                </div>
+                <div class="${footerClass}">
+                    <span class="rb-total-text">${footerText}</span>
+                    <span class="rb-total-val">${footerValue}</span>
+                </div>
+            </div>
+        `;
+
+        resultsBox.innerHTML = html;
+        resultsBox.style.display = 'block';
+        
+        // НОВОЕ: СКРЫВАЕМ ТАБЛИЦУ
+        tableContainer.style.display = 'none';
+    }
+
+    // --- ФУНКЦИЯ СБРОСА ИГРЫ (ВОССТАНАВЛИВАЕТ ТАБЛИЦУ) ---
+    function resetGame(newTest = false) {
+        clearInterval(timerInterval);
+        gameActive = false;
+        timeLeft = TOTAL_TIME;
+        currentNumber = 1;
+        startTime = null;
+        stats = { found_15s: 0, found_30s: 0, found_total: 0, time_to_25: null };
+
+        timeLeftEl.textContent = formatTime(TOTAL_TIME);
+        updateProgress();
+        resultsBox.style.display = 'none';
+
+        // НОВОЕ: ВОССТАНАВЛИВАЕМ ТАБЛИЦУ
+        tableContainer.style.display = 'grid'; 
+
+        generateTable();
+        document.querySelectorAll('.schulte-cell').forEach(cell => {
+            cell.classList.remove('disabled', 'found');
+        });
+    }
+
+    window.onload = resetGame;
+</script>
+
+</body>
+</html>
